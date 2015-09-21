@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
-#import "ES2Renderer.h"
-//#import "ESRenderer.h"
+#import "ShaderRenderer.h"
+
 
 // This class wraps the CAEAGLLayer from CoreAnimation into a convenient UIView subclass.
 // The view content is basically an EAGL surface you render your OpenGL scene into.
@@ -8,13 +8,13 @@
 @interface EAGLView : UIView
 {    
 @private
-	id <ESRenderer> renderer;
+//	ShaderRenderer  *renderer;
 
-	id displayLink;
+//	id displayLink;
 }
 
 
-@property(readwrite) id <ESRenderer> renderer;
+@property(readwrite,retain) ShaderRenderer *renderer;
 
 @property(readwrite) struct TextureInput texureInput;
 

@@ -11,6 +11,10 @@
 		0C04CAC91BAADD4800250362 /* oil.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0C04CAC71BAADD4800250362 /* oil.jpg */; };
 		0C04CACB1BAAE08D00250362 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C04CACA1BAAE08D00250362 /* GLKit.framework */; };
 		0C04CACD1BAAE78D00250362 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C04CACC1BAAE78D00250362 /* Storyboard.storyboard */; };
+		0C14EB711BAE8F75007FF8B0 /* horzBlurShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 0C14EB6D1BAE8F75007FF8B0 /* horzBlurShader.fsh */; };
+		0C14EB721BAE8F75007FF8B0 /* horzBlurShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 0C14EB6E1BAE8F75007FF8B0 /* horzBlurShader.vsh */; };
+		0C14EB751BAE9669007FF8B0 /* horzBlurShader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 0C14EB6D1BAE8F75007FF8B0 /* horzBlurShader.fsh */; };
+		0C14EB761BAE9669007FF8B0 /* horzBlurShader.vsh in Sources */ = {isa = PBXBuildFile; fileRef = 0C14EB6E1BAE8F75007FF8B0 /* horzBlurShader.vsh */; };
 		0C264DF51BAD582A0039E6BA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C264DF41BAD582A0039E6BA /* ViewController.m */; };
 		0C264DF71BAD8DEC0039E6BA /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C264DF61BAD8DEC0039E6BA /* AVFoundation.framework */; };
 		0C264DF91BAD8FCA0039E6BA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C264DF81BAD8FCA0039E6BA /* CoreMedia.framework */; };
@@ -29,9 +33,8 @@
 		28FD15000DC6FC520079059D /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD14FF0DC6FC520079059D /* OpenGLES.framework */; };
 		28FD15080DC6FC5B0079059D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
 		2BD1087911F0C38D00DD49D3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD1087811F0C38D00DD49D3 /* CoreGraphics.framework */; };
-		AF1AED3A101E699D00EFB8CB /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1AED35101E699D00EFB8CB /* ES2Renderer.m */; };
-		AF1AED3B101E699D00EFB8CB /* Shaders.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1AED38101E699D00EFB8CB /* Shaders.m */; };
-		AF1AED43101E69BE00EFB8CB /* shader.txt in Resources */ = {isa = PBXBuildFile; fileRef = AF1AED41101E69BE00EFB8CB /* shader.txt */; };
+		AF1AED3A101E699D00EFB8CB /* ShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1AED35101E699D00EFB8CB /* ShaderRenderer.m */; };
+		AF1AED3B101E699D00EFB8CB /* GLShader.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1AED38101E699D00EFB8CB /* GLShader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +43,8 @@
 		0C04CACA1BAAE08D00250362 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		0C04CACC1BAAE78D00250362 /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		0C14EAFC1BAE83DF007FF8B0 /* ShaderSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderSample_Prefix.pch; sourceTree = "<group>"; };
+		0C14EB6D1BAE8F75007FF8B0 /* horzBlurShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = horzBlurShader.fsh; sourceTree = "<group>"; };
+		0C14EB6E1BAE8F75007FF8B0 /* horzBlurShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = horzBlurShader.vsh; sourceTree = "<group>"; };
 		0C264DF31BAD582A0039E6BA /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		0C264DF41BAD582A0039E6BA /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		0C264DF61BAD8DEC0039E6BA /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -62,11 +67,10 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2BD1087811F0C38D00DD49D3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* ShaderSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ShaderSample-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
-		AF1AED34101E699D00EFB8CB /* ES2Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES2Renderer.h; sourceTree = "<group>"; };
-		AF1AED35101E699D00EFB8CB /* ES2Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES2Renderer.m; sourceTree = "<group>"; };
-		AF1AED37101E699D00EFB8CB /* Shaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shaders.h; sourceTree = "<group>"; };
-		AF1AED38101E699D00EFB8CB /* Shaders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shaders.m; sourceTree = "<group>"; };
-		AF1AED41101E69BE00EFB8CB /* shader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shader.txt; sourceTree = "<group>"; };
+		AF1AED34101E699D00EFB8CB /* ShaderRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderRenderer.h; sourceTree = "<group>"; };
+		AF1AED35101E699D00EFB8CB /* ShaderRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderRenderer.m; sourceTree = "<group>"; };
+		AF1AED37101E699D00EFB8CB /* GLShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLShader.h; sourceTree = "<group>"; };
+		AF1AED38101E699D00EFB8CB /* GLShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLShader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,10 +97,10 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				AF1AED34101E699D00EFB8CB /* ES2Renderer.h */,
-				AF1AED35101E699D00EFB8CB /* ES2Renderer.m */,
-				AF1AED37101E699D00EFB8CB /* Shaders.h */,
-				AF1AED38101E699D00EFB8CB /* Shaders.m */,
+				AF1AED34101E699D00EFB8CB /* ShaderRenderer.h */,
+				AF1AED35101E699D00EFB8CB /* ShaderRenderer.m */,
+				AF1AED37101E699D00EFB8CB /* GLShader.h */,
+				AF1AED38101E699D00EFB8CB /* GLShader.m */,
 				28FD14FC0DC6FC130079059D /* EAGLView.h */,
 				28FD14FD0DC6FC130079059D /* EAGLView.m */,
 				1D3623240D0F684500981E51 /* GLES2SampleAppDelegate.h */,
@@ -170,7 +174,8 @@
 		AF1AED3F101E69BE00EFB8CB /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
-				AF1AED41101E69BE00EFB8CB /* shader.txt */,
+				0C14EB6D1BAE8F75007FF8B0 /* horzBlurShader.fsh */,
+				0C14EB6E1BAE8F75007FF8B0 /* horzBlurShader.vsh */,
 				0C26DC151BAE7478008294F3 /* shader.vsh */,
 				0C26DC171BAE7489008294F3 /* shader.fsh */,
 			);
@@ -230,10 +235,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C26DC161BAE7478008294F3 /* shader.vsh in Resources */,
+				0C14EB721BAE8F75007FF8B0 /* horzBlurShader.vsh in Resources */,
 				0C04CAC91BAADD4800250362 /* oil.jpg in Resources */,
 				0C26DC181BAE7489008294F3 /* shader.fsh in Resources */,
-				AF1AED43101E69BE00EFB8CB /* shader.txt in Resources */,
 				0C04CACD1BAAE78D00250362 /* Storyboard.storyboard in Resources */,
+				0C14EB711BAE8F75007FF8B0 /* horzBlurShader.fsh in Resources */,
 				0C04CAC81BAADD4800250362 /* image.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -245,6 +251,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C14EB751BAE9669007FF8B0 /* horzBlurShader.fsh in Sources */,
+				0C14EB761BAE9669007FF8B0 /* horzBlurShader.vsh in Sources */,
 				0C26DC191BAE753E008294F3 /* shader.vsh in Sources */,
 				0C26DC1A1BAE753E008294F3 /* shader.fsh in Sources */,
 				0C264DF51BAD582A0039E6BA /* ViewController.m in Sources */,
@@ -252,8 +260,8 @@
 				1D3623260D0F684500981E51 /* GLES2SampleAppDelegate.m in Sources */,
 				28FD14FE0DC6FC130079059D /* EAGLView.m in Sources */,
 				0C264DFE1BAD9F670039E6BA /* Utility.m in Sources */,
-				AF1AED3A101E699D00EFB8CB /* ES2Renderer.m in Sources */,
-				AF1AED3B101E699D00EFB8CB /* Shaders.m in Sources */,
+				AF1AED3A101E699D00EFB8CB /* ShaderRenderer.m in Sources */,
+				AF1AED3B101E699D00EFB8CB /* GLShader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

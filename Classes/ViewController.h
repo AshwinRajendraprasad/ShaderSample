@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
-#import "ES2Renderer.h"
+#import "ShaderRenderer.h"
 #import "EAGLView.h"
 #import "Utility.h"
 
@@ -20,7 +20,7 @@
 
 	IBOutlet UIView *glkView;
 	
-	id <ESRenderer> renderer;
+	ShaderRenderer *renderer;
 
 }
 

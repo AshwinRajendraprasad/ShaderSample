@@ -11,4 +11,5 @@
 @interface Utility : NSObject
 +(UIImage *) imageFromCVImageBufferRef:(CVImageBufferRef)imageBuffer;
 +(UIImage *)getBlurImage:(UIImage *)image;
++(UIImage *) ImageFromPixel:(void *)data width:(GLint)width height:(GLint)height orientation:(UIImageOrientation)orientation;
 @end

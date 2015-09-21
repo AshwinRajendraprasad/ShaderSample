@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 
+
 @interface ViewController (){
 
 	NSString *_sessionPreset;
@@ -49,7 +50,14 @@
 	NSData *texData2 = [[NSData alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"oil" ofType:@"jpg"]];
 	UIImage *image2 = [[UIImage alloc] initWithData:texData2];
 	
-	renderer = [[ES2Renderer alloc] initWithShader:@"shader" textures:[NSArray arrayWithObjects:image,image2, nil] Attributes:Nil];
+	NSArray *textureArray = [NSArray arrayWithObjects:image,image2, nil];
+	
+	NSArray *shaderArray = [NSArray arrayWithObjects:@"horzBlurShader",@"horzBlurShader",nil];
+	
+	renderer = [[ShaderRenderer alloc] initWithShader:shaderArray onScreen:YES textures:Nil Attributes:Nil];
+	
+	renderer.width = 640;
+	renderer.height = 852;
 	
 	((EAGLView *)glkView).renderer = renderer;
 	
@@ -108,6 +116,9 @@
 
 	CVPixelBufferLockBaseAddress(pixelBuffer, 0);
 	
+	size_t width = CVPixelBufferGetWidth(pixelBuffer);
+	size_t height = CVPixelBufferGetHeight(pixelBuffer);
+	
 //	UIImage *image = [Utility imageFromCVImageBufferRef:pixelBuffer];
 
 	NSData *texData = [[NSData alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"]];
@@ -117,7 +128,17 @@
 	
 //	UIImage *image2 = [Utility getBlurImage:image];
 	
-
+	
+	NSMutableDictionary *uniforms = [[NSMutableDictionary alloc] init];
+	
+	float blurRadius = 10.0;
+	
+	CGPoint cgpoint = CGPointMake(1.0, 0.0);
+	
+	[uniforms setValue:[NSString stringWithFormat:@"%zu",width] forKey:@"width"];
+	[uniforms setValue:[NSString stringWithFormat:@"%zu",height] forKey:@"height"];
+	[uniforms setValue:[NSString stringWithFormat:@"%f",blurRadius] forKey:@"radius"];
+    [uniforms setValue:[NSValue valueWithCGPoint:cgpoint] forKey:@"dir"];
 	
 	
 	struct TextureInput texureInput;
@@ -126,17 +147,13 @@
 	
 	texureInput.image = image;
 	
-	[renderer renderWithTextures:texureInput];
+	[renderer renderWithTextures:texureInput Uniforms:uniforms];
 	
+	UIImage *img = [renderer getRenderedImage];
 
 	CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 	
-//	[image release];
 	[texData release];
-	
-//	free(texData);
-
-	
 	
 	
 }

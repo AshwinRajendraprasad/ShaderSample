@@ -62,4 +62,23 @@
 	CGImageRelease(processedCgImage);
 	return img;
 }
+
++(UIImage *) ImageFromPixel:(void *)data width:(GLint)width height:(GLint)height orientation:(UIImageOrientation)orientation{
+
+	size_t size = width * height * 4;
+	size_t bitsPerComponent = 8;
+	size_t bitsPerPixel = 32;
+	size_t bytesPerRow = width * bitsPerPixel / bitsPerComponent;
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault;
+	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, data, size, NULL);
+	CGImageRef cgImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, NULL, FALSE, kCGRenderingIntentDefault);
+	CGDataProviderRelease(provider);
+	
+	UIImage *image = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:orientation];
+	CGImageRelease(cgImage);
+	CGColorSpaceRelease(colorSpace);
+
+	return image;
+}
 @end

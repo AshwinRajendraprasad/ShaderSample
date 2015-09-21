@@ -30,7 +30,7 @@
 
 - (void) drawView:(id)sender
 {
-    [renderer renderWithTextures:texureInput];
+//    [renderer renderWithTextures:texureInput uniforms:<#(NSDictionary *)#>];
 }
 
 - (void) layoutSubviews
