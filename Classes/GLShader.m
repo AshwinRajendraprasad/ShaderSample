@@ -6,10 +6,19 @@ const char* kShaderAttribNames[kAttrCount] = {
 	"a_texCoord",
 };
 
+@interface GLShader (){
+
+	
+	 GLint vertShader;
+	 GLint fragShader;
+
+}
+
+@end
 
 @implementation GLShader
 
-@synthesize vertShader,fragShader,prog;
+@synthesize prog,textureArray,uniformArray;
 
 
 
@@ -57,24 +66,24 @@ const char* kShaderAttribNames[kAttrCount] = {
 //-(bool) LoadShader: (NSString*) file cc:(struct Shader* )oshader;
 
 
--(bool) LoadShader: (NSArray*) shaderFileList
+-(bool) LoadShader: (NSString*) shaderFile
 {
 	prog = vertShader = fragShader = 0;
 	NSString *vertShaderPathname, *fragShaderPathname;
 	
-	NSString *file = [shaderFileList objectAtIndex:0];
+//	NSString *shaderFile = [shaderFileList objectAtIndex:0];
 	
 	
 	prog = glCreateProgram();
 	
-		vertShaderPathname = [[NSBundle mainBundle] pathForResource:file ofType:@"vsh"];
+		vertShaderPathname = [[NSBundle mainBundle] pathForResource:shaderFile ofType:@"vsh"];
 
 	if (![self compileShader:&vertShader type:GL_VERTEX_SHADER defines:"#define VERTEX\n" file:vertShaderPathname]) {
 		
 		[self DestroyShader];
 		return false;
 	}
-		fragShaderPathname = [[NSBundle mainBundle] pathForResource:file ofType:@"fsh"];
+		fragShaderPathname = [[NSBundle mainBundle] pathForResource:shaderFile ofType:@"fsh"];
 	if (![self compileShader:&fragShader type:GL_FRAGMENT_SHADER defines:"#define FRAGMENT\n" file:fragShaderPathname]) {
 			[self DestroyShader];
 		return false;
@@ -108,9 +117,44 @@ const char* kShaderAttribNames[kAttrCount] = {
     if (status == GL_FALSE)
 		NSLog(@"Failed to link program %d", prog);
 	
+	
+
+	
 	return true;
 }
 
+
+-(void)loadTexture{
+
+	
+	for (int i = 0; i < [textureArray count]; ++i){
+		GLTexture *glTexture = [textureArray objectAtIndex:i];
+		glTexture.textureId = i+1;
+		glTexture.textureLocation = glGetUniformLocation(prog, [glTexture.textureName UTF8String]);
+		
+		[glTexture loadTexture];
+		
+	}
+
+}
+
+
+-(void)loadUniforms{
+
+
+
+
+	
+	for (int i = 0; i < [uniformArray count]; ++i){
+		GLUniform *glUniform = [uniformArray objectAtIndex:i];
+
+		glUniform.uniformLocation = glGetUniformLocation(prog, [glUniform.uniformName UTF8String]);
+		
+		[glUniform loadUniform];
+		
+	}
+
+}
 
 //-(GLint) validateProgram:(GLuint )prog;
 -(void) DestroyShader

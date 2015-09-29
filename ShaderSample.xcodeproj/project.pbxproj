@@ -25,6 +25,8 @@
 		0C26DC181BAE7489008294F3 /* shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 0C26DC171BAE7489008294F3 /* shader.fsh */; };
 		0C26DC191BAE753E008294F3 /* shader.vsh in Sources */ = {isa = PBXBuildFile; fileRef = 0C26DC151BAE7478008294F3 /* shader.vsh */; };
 		0C26DC1A1BAE753E008294F3 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 0C26DC171BAE7489008294F3 /* shader.fsh */; };
+		0CB99F071BBA6DB3008D3919 /* GLTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CB99F061BBA6DB3008D3919 /* GLTexture.m */; };
+		0CB99F0A1BBA6DCB008D3919 /* GLUniform.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CB99F091BBA6DCB008D3919 /* GLUniform.m */; };
 		1D3623260D0F684500981E51 /* GLES2SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* GLES2SampleAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -55,6 +57,10 @@
 		0C26DC131BAE7053008294F3 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		0C26DC151BAE7478008294F3 /* shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.vsh; sourceTree = "<group>"; };
 		0C26DC171BAE7489008294F3 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
+		0CB99F051BBA6DB3008D3919 /* GLTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLTexture.h; path = ../GLTexture.h; sourceTree = "<group>"; };
+		0CB99F061BBA6DB3008D3919 /* GLTexture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GLTexture.m; path = ../GLTexture.m; sourceTree = "<group>"; };
+		0CB99F081BBA6DCB008D3919 /* GLUniform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLUniform.h; sourceTree = "<group>"; };
+		0CB99F091BBA6DCB008D3919 /* GLUniform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLUniform.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* GLES2SampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLES2SampleAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* GLES2SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLES2SampleAppDelegate.m; sourceTree = "<group>"; };
@@ -97,6 +103,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				0CB99F051BBA6DB3008D3919 /* GLTexture.h */,
+				0CB99F061BBA6DB3008D3919 /* GLTexture.m */,
 				AF1AED34101E699D00EFB8CB /* ShaderRenderer.h */,
 				AF1AED35101E699D00EFB8CB /* ShaderRenderer.m */,
 				AF1AED37101E699D00EFB8CB /* GLShader.h */,
@@ -110,6 +118,8 @@
 				0C264DF41BAD582A0039E6BA /* ViewController.m */,
 				0C264DFC1BAD9F670039E6BA /* Utility.h */,
 				0C264DFD1BAD9F670039E6BA /* Utility.m */,
+				0CB99F081BBA6DCB008D3919 /* GLUniform.h */,
+				0CB99F091BBA6DCB008D3919 /* GLUniform.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -253,6 +263,7 @@
 			files = (
 				0C14EB751BAE9669007FF8B0 /* horzBlurShader.fsh in Sources */,
 				0C14EB761BAE9669007FF8B0 /* horzBlurShader.vsh in Sources */,
+				0CB99F071BBA6DB3008D3919 /* GLTexture.m in Sources */,
 				0C26DC191BAE753E008294F3 /* shader.vsh in Sources */,
 				0C26DC1A1BAE753E008294F3 /* shader.fsh in Sources */,
 				0C264DF51BAD582A0039E6BA /* ViewController.m in Sources */,
@@ -260,6 +271,7 @@
 				1D3623260D0F684500981E51 /* GLES2SampleAppDelegate.m in Sources */,
 				28FD14FE0DC6FC130079059D /* EAGLView.m in Sources */,
 				0C264DFE1BAD9F670039E6BA /* Utility.m in Sources */,
+				0CB99F0A1BBA6DCB008D3919 /* GLUniform.m in Sources */,
 				AF1AED3A101E699D00EFB8CB /* ShaderRenderer.m in Sources */,
 				AF1AED3B101E699D00EFB8CB /* GLShader.m in Sources */,
 			);

@@ -9,25 +9,20 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/EAGLDrawable.h>
 #import "Utility.h"
-
+#import "GLTexture.h"
 struct TextureInput{
 
 	CVImageBufferRef pixelBuffer;
 	UIImage *image;
-	
+	CAEAGLLayer *renderedLayer;
 
 
 };
 
-//@protocol ESRenderer <NSObject>
-//
-//- (void)renderWithTextures:(struct TextureInput) textureInput uniforms:(NSDictionary *) uniforms;
-//- (BOOL)resizeFromLayer:(CAEAGLLayer*)layer;
-//
-//@end
-
 @interface ShaderRenderer : NSObject
 {
+	
+	
 @private
 	EAGLContext *context;
 	
@@ -44,16 +39,17 @@ struct TextureInput{
 	GLfloat rotz;
 	
 	GLShader *shaders;
-	BOOL isOnScreen;
+	BOOL isOnScreenRender;
+	CAEAGLLayer *renderedLayer;
 	
 }
 
 @property(readwrite) int width;
 @property(readwrite) int height;
 
-- (void)renderWithTextures:(struct TextureInput) textureInput Uniforms:(NSDictionary *) uniforms;
+- (void)renderWithTextures:(NSArray *) textures Uniforms:(NSArray *) uniforms;
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer;
-- (id) initWithShader:(NSArray *) shaderList  onScreen:(BOOL)isOnScreen2 textures:(NSArray *) texures Attributes:(NSArray *) attrib;
+- (id) initWithShader:(NSArray *) shaderList  onScreen:(BOOL)isOnScreen2 textures:(NSArray *) texures Uniforms:(NSArray *) uniforms;
 -(UIImage *)getRenderedImage;
 
 @end

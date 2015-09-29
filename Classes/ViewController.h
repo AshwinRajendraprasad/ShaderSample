@@ -12,6 +12,8 @@
 #import "ShaderRenderer.h"
 #import "EAGLView.h"
 #import "Utility.h"
+#import "GLTexture.h"
+#import "GLUniform.h"
 
 @interface ViewController : UIViewController<AVCaptureVideoDataOutputSampleBufferDelegate>
 
@@ -21,6 +23,8 @@
 	IBOutlet UIView *glkView;
 	
 	ShaderRenderer *renderer;
+	NSArray *textureArray;
+	NSArray *uniformArray;
 
 }
 

@@ -15,6 +15,8 @@
 	
 	AVCaptureSession *_session;
 	CVImageBufferRef pixelBuffer2;
+	
+	
 
 }
 
@@ -43,24 +45,88 @@
 	}
 	
 	[self setupAVCapture];
+
 	
-	NSData *texData = [[NSData alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"]];
-	UIImage *image = [[UIImage alloc] initWithData:texData];
+	textureArray = [self getShader1Texures];
 	
-	NSData *texData2 = [[NSData alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"oil" ofType:@"jpg"]];
-	UIImage *image2 = [[UIImage alloc] initWithData:texData2];
+	uniformArray = [self getShader1Uniforms];
 	
-	NSArray *textureArray = [NSArray arrayWithObjects:image,image2, nil];
+	NSArray *shaderArray = [NSArray arrayWithObjects:@"horzBlurShader",nil];
 	
-	NSArray *shaderArray = [NSArray arrayWithObjects:@"horzBlurShader",@"horzBlurShader",nil];
-	
-	renderer = [[ShaderRenderer alloc] initWithShader:shaderArray onScreen:YES textures:Nil Attributes:Nil];
+	renderer = [[ShaderRenderer alloc] initWithShader:shaderArray onScreen:YES textures:textureArray Uniforms:uniformArray];
 	
 	renderer.width = 640;
 	renderer.height = 852;
 	
 	((EAGLView *)glkView).renderer = renderer;
 	
+
+}
+
+
+-(NSArray *) getShader1Texures{
+	
+	NSData *texData = [[NSData alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"]];
+	UIImage *image = [[UIImage alloc] initWithData:texData];
+	NSData *texData2 = [[NSData alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"oil" ofType:@"jpg"]];
+	UIImage *image2 = [[UIImage alloc] initWithData:texData2];
+
+	GLTexture *texture1 = [[GLTexture alloc] init];
+	
+	[texture1 setTextureName:@"s_overlay"];
+	[texture1 setTextureId:1];
+	[texture1 setTextureType:Image];
+	[texture1 setTextureImage:image];
+	
+	
+
+	GLTexture *texture2 = [[GLTexture alloc] init];
+	
+	[texture2 setTextureName:@"s_texture"];
+	[texture2 setTextureId:2];
+	[texture2 setTextureType:CVImageBuffer];
+//	[texture2 setTextureImage:image2];
+	
+	NSArray *array = [NSArray arrayWithObjects:texture1, texture2, nil];
+
+	
+	return array;
+
+}
+
+-(NSArray *) getShader1Uniforms{
+
+	CGPoint cgpoint = CGPointMake(1.0, 0.0);
+	float blurRadius = 10.0;
+	GLUniform *uniform1 = [[GLUniform alloc] init];
+	
+	[uniform1 setUniformName:@"width"];
+	
+	
+	GLUniform *uniform2 = [[GLUniform alloc] init];
+	
+	[uniform2 setUniformName:@"height"];
+	
+	
+	GLUniform *uniform3 = [[GLUniform alloc] init];
+	
+	[uniform3 setUniformName:@"radius"];
+	[uniform3 setUniformData:[NSNumber numberWithFloat:blurRadius]];
+	
+	
+	GLUniform *uniform4 = [[GLUniform alloc] init];
+	
+	[uniform4 setUniformName:@"dir"];
+
+	
+	[uniform4 setUniformData:[NSValue valueWithCGPoint:cgpoint]];
+
+
+	
+	NSArray *array = [NSArray arrayWithObjects:uniform1, uniform2,uniform3,uniform4, nil];
+	
+	
+	return array;
 
 }
 
@@ -119,41 +185,31 @@
 	size_t width = CVPixelBufferGetWidth(pixelBuffer);
 	size_t height = CVPixelBufferGetHeight(pixelBuffer);
 	
-//	UIImage *image = [Utility imageFromCVImageBufferRef:pixelBuffer];
 
-	NSData *texData = [[NSData alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"]];
-	UIImage *image = [[UIImage alloc] initWithData:texData];
-	
-//		UIImage *image = [UIImage imageNamed:@"image.jpg"];
-	
-//	UIImage *image2 = [Utility getBlurImage:image];
 	
 	
-	NSMutableDictionary *uniforms = [[NSMutableDictionary alloc] init];
+	for (GLUniform *uni in uniformArray) {
+		
+		
+		if ([uni.uniformName isEqualToString:@"width"]) {
+			[uni setUniformData:[NSNumber numberWithFloat:width ]];
+		}else if ([uni.uniformName isEqualToString:@"height"]){
+		[uni setUniformData:[NSNumber numberWithFloat:height ]];
+		
+		}
+		
+	}
+
 	
-	float blurRadius = 10.0;
-	
-	CGPoint cgpoint = CGPointMake(1.0, 0.0);
-	
-	[uniforms setValue:[NSString stringWithFormat:@"%zu",width] forKey:@"width"];
-	[uniforms setValue:[NSString stringWithFormat:@"%zu",height] forKey:@"height"];
-	[uniforms setValue:[NSString stringWithFormat:@"%f",blurRadius] forKey:@"radius"];
-    [uniforms setValue:[NSValue valueWithCGPoint:cgpoint] forKey:@"dir"];
 	
 	
-	struct TextureInput texureInput;
+	[((GLTexture *)[textureArray objectAtIndex:1]) setTextureImageBuffer:pixelBuffer];
 	
-	texureInput.pixelBuffer = pixelBuffer;
-	
-	texureInput.image = image;
-	
-	[renderer renderWithTextures:texureInput Uniforms:uniforms];
-	
-	UIImage *img = [renderer getRenderedImage];
+	[renderer renderWithTextures:textureArray Uniforms:uniformArray];
+
 
 	CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-	
-	[texData release];
+
 	
 	
 }

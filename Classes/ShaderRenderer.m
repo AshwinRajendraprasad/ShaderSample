@@ -23,8 +23,17 @@ static const char* kUniformNames[kUniformCount] = {
 };
 static GLint g_Uniforms[kUniformCount];
 
-@interface ShaderRenderer (PrivateMethods)
+
+
+@interface ShaderRenderer ()
 //- (BOOL)loadShader:(NSString *) shader WithTextures:(NSArray *) textures Attributes:(NSArray *) attributes;
+{
+//	GLint textureUniforms[2];
+//	
+//	NSArray *textureNames;
+
+
+}
 @end
 
 @implementation ShaderRenderer
@@ -32,13 +41,13 @@ static GLint g_Uniforms[kUniformCount];
 @synthesize width,height;
 
 // Create an ES 2.0 context
-- (id) initWithShader:(NSArray *) shaderList onScreen:(BOOL)isOnScreen2 textures:(NSArray *) texures Attributes:(NSArray *) attrib
+- (id) initWithShader:(NSArray *) shaderList onScreen:(BOOL)isOnScreen2 textures:(NSArray *) texures Uniforms:(NSArray *) uniforms
 {
 	if (self = [super init])
 	{
 		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-		shaders  = [[GLShader alloc] init];
-		if (!context || ![EAGLContext setCurrentContext:context] || ![self loadShader:shaderList WithTextures:texures Uniforms:Nil])
+		
+		if (!context || ![EAGLContext setCurrentContext:context] || ![self loadShader:shaderList WithTextures:texures Uniforms:uniforms])
 		{
 			[self release];
 			return nil;
@@ -50,13 +59,19 @@ static GLint g_Uniforms[kUniformCount];
 		glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
-		isOnScreen=isOnScreen2;
+		
 	}
+
+	if([shaderList count ]>1)
+		isOnScreenRender = NO;
+	isOnScreenRender=isOnScreen2;
+
+
 	
 	return self;
 }
 
-- (void)renderWithTextures:(struct TextureInput) textureInput Uniforms:(NSDictionary *) uniforms
+- (void)renderWithTextures:(NSArray *) textures Uniforms:(NSArray *) uniforms
 {
 	
 	
@@ -71,17 +86,22 @@ static GLint g_Uniforms[kUniformCount];
 	
 	glUseProgram(shaders.prog);
 	
-	[self loadTextureOnRender:textureInput];
+	shaders.textureArray = textures;
 	
-	[self loadAttributesOnRender:uniforms];
+	[shaders loadTexture];
 	
-	
-	glActiveTexture (GL_TEXTURE0);
-	glBindTexture (GL_TEXTURE_2D, 1);
-	glUniform1i (g_Uniforms[kUniformTexColor], 0);
-	glActiveTexture (GL_TEXTURE1);
-	glBindTexture (GL_TEXTURE_2D, 2);
-	glUniform1i (g_Uniforms[kUniformTexNormal], 1);
+	[shaders setUniformArray:uniforms];
+
+	[shaders loadUniforms];
+	for (int i = 0; i<[shaders.textureArray count]; i++) {
+		GLTexture *texture = [shaders.textureArray objectAtIndex:i];
+		
+		glActiveTexture (GL_TEXTURE0+i);
+		glBindTexture (GL_TEXTURE_2D, texture.textureId);
+		glUniform1i (texture.textureLocation, i);
+
+	}
+
 	
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
@@ -93,7 +113,7 @@ static GLint g_Uniforms[kUniformCount];
 	
 	
 	
-	if(isOnScreen)
+	if(isOnScreenRender)
 	{
 		[context presentRenderbuffer:GL_RENDERBUFFER];
 	}
@@ -114,134 +134,38 @@ static GLint g_Uniforms[kUniformCount];
 	return image;
 }
 
--(void) LoadTexture: (GLint) texID Image:(UIImage*) image
-{
-	
-	if (image == nil)
-		return;
-	
-	GLuint width = CGImageGetWidth(image.CGImage);
-	GLuint height = CGImageGetHeight(image.CGImage);
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	void *imageData = malloc( height * width * 4 );
-	CGContextRef cgcontext = CGBitmapContextCreate( imageData, width, height, 8, 4 * width, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
-	CGColorSpaceRelease( colorSpace );
-	CGContextClearRect( cgcontext, CGRectMake( 0, 0, width, height ) );
-	CGContextTranslateCTM( cgcontext, 0, height - height );
-	CGContextDrawImage( cgcontext, CGRectMake( 0, 0, width, height ), image.CGImage );
-	
-	glBindTexture (GL_TEXTURE_2D, texID);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_NEAREST_MIPMAP_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-	
-	CGContextRelease(cgcontext);
-	
-	free(imageData);
-	[image release];
-	
-}
--(void) LoadTexture:(GLint) texID FromFrameBuffer:(GLint) frameBuffer AndColorBuffer:(GLint) colorRenderBuffer{
 
 
-	// Offscreen position framebuffer object
-
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	
-
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderBuffer);
-	
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, backingWidth, backingHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderBuffer);
-	
-	// Offscreen position framebuffer texture target
-
-	glBindTexture(GL_TEXTURE_2D, colorRenderBuffer);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, backingWidth, backingHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorRenderBuffer, 0);
-
-
-
-}
-
--(void) LoadTexture: (GLint) texID ImageBuffer:(CVImageBufferRef ) pixelBuffer
-{
-
-	size_t width = CVPixelBufferGetWidth(pixelBuffer);
-	size_t height = CVPixelBufferGetHeight(pixelBuffer);
-	glBindTexture (GL_TEXTURE_2D, texID);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	
-	size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
-	int frameHeight = CVPixelBufferGetHeight(pixelBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)bytesPerRow / 4, (GLsizei)frameHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, CVPixelBufferGetBaseAddress(pixelBuffer));
-
-	
-}
-
-
-- (BOOL)loadShader:(NSArray *) shaderList WithTextures:(NSArray *) textures Uniforms:(NSDictionary *) uniforms {
+- (BOOL)loadShader:(NSArray *) shaderList WithTextures:(NSArray *) textures Uniforms:(NSArray *) uniforms {
 	
 	
+	for (NSString *shader in shaderList) {
+		shaders  = [[GLShader alloc] init];
+		[shaders setTextureArray:textures];
+		
+		[shaders setUniformArray:uniforms];
+		
+		// create shader program
+		if (![shaders LoadShader:shader])
+		{
+			return NO;
+		}
+		
+		[shaders loadTexture];
+		
+		[shaders loadUniforms];
 	
-	
-	// create shader program
-	if (![shaders LoadShader:shaderList])
-	{
-		return NO;
+		[self loadAttributesOnInitialization];
+		
 	}
 	
-	// get uniform locations
-	for (int i = 0; i < kUniformCount; ++i)
-		g_Uniforms[i] = glGetUniformLocation(shaders.prog, kUniformNames[i]);
-	
-	// create textures
-	
-	[self loadTextureOnInitilization:textures];
-	
-	
-	[self loadAttributesOnInitialization];
 	
 	
 	
 	return YES;
 }
 
--(void) loadTextureOnInitilization:(NSArray *)imageArray{
-	
-	int i = 1;
-	for (UIImage *image in imageArray) {
-		[self LoadTexture:i Image:image];
-		i++;
-	}
-	
-	
-}
 
--(void) loadTextureOnRender:(struct TextureInput) textureInput{
-	
-	
-	[self LoadTexture:1 ImageBuffer:textureInput.pixelBuffer];
-	
-//	UIImage *image2 = [Utility imageFromCVImageBufferRef:textureInput.pixelBuffer];
-	
-	
-
-	[self LoadTexture:2 Image:textureInput.image];
-	
-	
-}
 
 
 
@@ -270,30 +194,35 @@ static GLint g_Uniforms[kUniformCount];
 }
 
 
--(void)loadAttributesOnRender:(NSDictionary *) uniforms{
-	
-	
-	NSValue *dir = [uniforms objectForKey:@"dir"];
-	
-	CGPoint direction = [dir CGPointValue];
-	
-
-	glUniform1f(g_Uniforms[kUniformWidth], [[uniforms objectForKey:@"width"] floatValue]);
-	glUniform1f(g_Uniforms[kUniformHeight], [[uniforms objectForKey:@"height"] floatValue]);
-	glUniform1f(g_Uniforms[kUniformRadius], [[uniforms objectForKey:@"radius"] floatValue]);
-
-	glUniform2f(g_Uniforms[kUniformDir], direction.x, direction.y);
-}
+//-(void)loadUniformsOnRender:(NSDictionary *) uniforms{
+//	
+//	
+//	NSValue *dir = [uniforms objectForKey:@"dir"];
+//	
+//	CGPoint direction = [dir CGPointValue];
+//	
+//
+//	glUniform1f(g_Uniforms[kUniformWidth], [[uniforms objectForKey:@"width"] floatValue]);
+//	glUniform1f(g_Uniforms[kUniformHeight], [[uniforms objectForKey:@"height"] floatValue]);
+//	glUniform1f(g_Uniforms[kUniformRadius], [[uniforms objectForKey:@"radius"] floatValue]);
+//
+//	glUniform2f(g_Uniforms[kUniformDir], direction.x, direction.y);
+//}
 
 
 
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer
 {
 	// Allocate color buffer backing based on the current layer size
+	
+	if (layer != Nil) {
+		renderedLayer = layer;
+	}
+	
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
-	if(isOnScreen)
-		[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
+	if(isOnScreenRender)
+		[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:renderedLayer];
 	else{
 		backingWidth = width;
 		backingHeight = height;
