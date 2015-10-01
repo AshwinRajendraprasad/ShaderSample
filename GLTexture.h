@@ -15,7 +15,8 @@ enum TexureType{
 
 
 	Image,
-	CVImageBuffer
+	CVImageBuffer,
+	FrameBuffer
 
 };
 
@@ -33,5 +34,6 @@ enum TexureType{
 @property(readwrite) CVImageBufferRef textureImageBuffer;
 
 -(void)loadTexture;
-
+//-(void) LoadTextureFromFrameBuffer:(GLint) frameBuffer AndColorBuffer:(GLint) colorRenderBuffer Width:(float) width Height:(float) height;
+-(void)loadTextureFromFrameBuffer:(GLint) frameBuffer Width:(int) width Height:(int) height;
 @end

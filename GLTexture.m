@@ -38,25 +38,38 @@
 	CGContextRelease(cgcontext);
 	
 	free(imageData);
-//	[image release];
+	//	[image release];
+//	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+-(void)loadTexture{
+	
+	
+	if (textureType == Image && textureImage != NULL) {
+		[self LoadTexture:textureId Image:textureImage];
+	}else if(textureType == CVImageBuffer && textureImageBuffer != NULL){
+		
+		[self LoadTexture:textureId ImageBuffer:textureImageBuffer];
+		
+	}else if(textureType == FrameBuffer){
+		
+		
+		//		[self LoadTextureFromFrameBuffer: AndColorBuffer: Width: Height:];
+	}
 	
 }
--(void) LoadTextureFromFrameBuffer:(GLint) frameBuffer AndColorBuffer:(GLint) colorRenderBuffer Width:(float) width Height:(float) height{
+
+-(void)loadTextureFromFrameBuffer:(GLint) frameBuffer Width:(int) width Height:(int) height{
 	
 	
-	// Offscreen position framebuffer object
+//	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+//	glBindRenderbuffer(GL_RENDERBUFFER, textureId);
+//	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, textureId);
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	
-	
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderBuffer);
-	
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderBuffer);
-	
-	// Offscreen position framebuffer texture target
-	
-	glBindTexture(GL_TEXTURE_2D, colorRenderBuffer);
+//	glEnable(GL_TEXTURE_2D);
+//	glActiveTexture (GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureId);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -64,23 +77,17 @@
 	
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorRenderBuffer, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+//	glBindTexture(GL_TEXTURE_2D, 0);
+//	GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+//	glDrawBuffers(1, DrawBuffers);
 	
 	
-	
-}
-
--(void)loadTexture{
-
-
-	if (textureType == Image && textureImage != NULL) {
-		[self LoadTexture:textureId Image:textureImage];
-	}else if(textureType == CVImageBuffer && textureImageBuffer != NULL){
-	
-		[self LoadTexture:textureId ImageBuffer:textureImageBuffer];
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
+		
+		NSLog(@"Loading frame buffer to texture error");
 	
 	}
-
 }
 
 -(void) LoadTexture: (GLint) texID ImageBuffer:(CVImageBufferRef ) pixelBuffer
@@ -97,7 +104,7 @@
 	size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
 	int frameHeight = CVPixelBufferGetHeight(pixelBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)bytesPerRow / 4, (GLsizei)frameHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, CVPixelBufferGetBaseAddress(pixelBuffer));
-	
+//	glBindTexture(GL_TEXTURE_2D, 0);
 	
 }
 @end

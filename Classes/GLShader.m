@@ -7,11 +7,11 @@ const char* kShaderAttribNames[kAttrCount] = {
 };
 
 @interface GLShader (){
-
 	
-	 GLint vertShader;
-	 GLint fragShader;
-
+	
+	GLint vertShader;
+	GLint fragShader;
+	
 }
 
 @end
@@ -36,24 +36,24 @@ const char* kShaderAttribNames[kAttrCount] = {
 		return NO;
 	}
 	
-    *shader = glCreateShader(type);				// create shader
-    glShaderSource(*shader, 1, &source, NULL);	// set source code in the shader
-    glCompileShader(*shader);					// compile shader
+	*shader = glCreateShader(type);				// create shader
+	glShaderSource(*shader, 1, &source, NULL);	// set source code in the shader
+	glCompileShader(*shader);					// compile shader
 	
 #if defined(DEBUG)
 	GLint logLength;
-    glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0)
-    {
-        GLchar *log = (GLchar *)malloc(logLength);
-        glGetShaderInfoLog(*shader, logLength, &logLength, log);
-        NSLog(@"Shader compile log:\n%s", log);
-        free(log);
-    }
+	glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
+	if (logLength > 0)
+	{
+		GLchar *log = (GLchar *)malloc(logLength);
+		glGetShaderInfoLog(*shader, logLength, &logLength, log);
+		NSLog(@"Shader compile log:\n%s", log);
+		free(log);
+	}
 #endif
-    
-    glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
-    if (status == GL_FALSE)
+	
+	glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
 	{
 		NSLog(@"Failed to compile shader:\n");
 		NSLog(@"%s", source);
@@ -66,26 +66,26 @@ const char* kShaderAttribNames[kAttrCount] = {
 //-(bool) LoadShader: (NSString*) file cc:(struct Shader* )oshader;
 
 
--(bool) LoadShader: (NSString*) shaderFile
+-(bool) compileShader: (NSString*) shaderFile
 {
 	prog = vertShader = fragShader = 0;
 	NSString *vertShaderPathname, *fragShaderPathname;
 	
-//	NSString *shaderFile = [shaderFileList objectAtIndex:0];
+	//	NSString *shaderFile = [shaderFileList objectAtIndex:0];
 	
 	
 	prog = glCreateProgram();
 	
-		vertShaderPathname = [[NSBundle mainBundle] pathForResource:shaderFile ofType:@"vsh"];
-
+	vertShaderPathname = [[NSBundle mainBundle] pathForResource:shaderFile ofType:@"vsh"];
+	
 	if (![self compileShader:&vertShader type:GL_VERTEX_SHADER defines:"#define VERTEX\n" file:vertShaderPathname]) {
 		
-		[self DestroyShader];
+		[self destroyShader];
 		return false;
 	}
-		fragShaderPathname = [[NSBundle mainBundle] pathForResource:shaderFile ofType:@"fsh"];
+	fragShaderPathname = [[NSBundle mainBundle] pathForResource:shaderFile ofType:@"fsh"];
 	if (![self compileShader:&fragShader type:GL_FRAGMENT_SHADER defines:"#define FRAGMENT\n" file:fragShaderPathname]) {
-			[self DestroyShader];
+		[self destroyShader];
 		return false;
 	}
 	
@@ -102,30 +102,30 @@ const char* kShaderAttribNames[kAttrCount] = {
 	
 #if defined(DEBUG)
 	GLint logLength;
-    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0)
-    {
-        GLchar *log = (GLchar *)malloc(logLength);
-        glGetProgramInfoLog(prog, logLength, &logLength, log);
-        NSLog(@"Program link log:\n%s", log);
-        free(log);
-    }
+	glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
+	if (logLength > 0)
+	{
+		GLchar *log = (GLchar *)malloc(logLength);
+		glGetProgramInfoLog(prog, logLength, &logLength, log);
+		NSLog(@"Program link log:\n%s", log);
+		free(log);
+	}
 #endif
-    
+	
 	GLint status;
-    glGetProgramiv(prog, GL_LINK_STATUS, &status);
-    if (status == GL_FALSE)
+	glGetProgramiv(prog, GL_LINK_STATUS, &status);
+	if (status == GL_FALSE)
 		NSLog(@"Failed to link program %d", prog);
 	
 	
-
+	
 	
 	return true;
 }
 
 
 -(void)loadTexture{
-
+	
 	
 	for (int i = 0; i < [textureArray count]; ++i){
 		GLTexture *glTexture = [textureArray objectAtIndex:i];
@@ -135,29 +135,42 @@ const char* kShaderAttribNames[kAttrCount] = {
 		[glTexture loadTexture];
 		
 	}
-
+	
 }
 
-
--(void)loadUniforms{
-
+-(void)loadTextureFromFrameBuffer:(GLint) framebuffer Width:(int)width Height:(int)height{
 
 
-
-	
-	for (int i = 0; i < [uniformArray count]; ++i){
-		GLUniform *glUniform = [uniformArray objectAtIndex:i];
-
-		glUniform.uniformLocation = glGetUniformLocation(prog, [glUniform.uniformName UTF8String]);
+	for (int i = 0; i < [textureArray count]; ++i){
+		GLTexture *glTexture = [textureArray objectAtIndex:i];
+		glTexture.textureId = i+1;
+		glTexture.textureLocation = glGetUniformLocation(prog, [glTexture.textureName UTF8String]);
 		
-		[glUniform loadUniform];
+		[glTexture loadTextureFromFrameBuffer:framebuffer Width:width Height:height];
 		
 	}
 
 }
 
+
+
+
+
+-(void)loadUniforms{
+	
+	for (int i = 0; i < [uniformArray count]; ++i){
+		GLUniform *glUniform = [uniformArray objectAtIndex:i];
+		
+		glUniform.uniformLocation = glGetUniformLocation(prog, [glUniform.uniformName UTF8String]);
+		
+		[glUniform loadUniform];
+		
+	}
+	
+}
+
 //-(GLint) validateProgram:(GLuint )prog;
--(void) DestroyShader
+-(void) destroyShader
 {
 	if (vertShader) {
 		glDeleteShader(vertShader);
@@ -179,17 +192,17 @@ const char* kShaderAttribNames[kAttrCount] = {
 	GLint logLength, status;
 	
 	glValidateProgram(prog2);
-    glGetProgramiv(prog2, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0)
-    {
-        GLchar *log = (GLchar *)malloc(logLength);
-        glGetProgramInfoLog(prog2, logLength, &logLength, log);
-        NSLog(@"Program validate log:\n%s", log);
-        free(log);
-    }
-    
-    glGetProgramiv(prog2, GL_VALIDATE_STATUS, &status);
-    if (status == GL_FALSE)
+	glGetProgramiv(prog2, GL_INFO_LOG_LENGTH, &logLength);
+	if (logLength > 0)
+	{
+		GLchar *log = (GLchar *)malloc(logLength);
+		glGetProgramInfoLog(prog2, logLength, &logLength, log);
+		NSLog(@"Program validate log:\n%s", log);
+		free(log);
+	}
+	
+	glGetProgramiv(prog2, GL_VALIDATE_STATUS, &status);
+	if (status == GL_FALSE)
 		NSLog(@"Failed to validate program %d", prog2);
 	
 	return status;

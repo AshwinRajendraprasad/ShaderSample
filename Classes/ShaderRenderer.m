@@ -1,53 +1,26 @@
 #import "ShaderRenderer.h"
 #import "GLShader.h"
 
-// ---- profiler bits
-
-
-enum {
-	kUniformTexColor,
-	kUniformTexNormal,
-	kUniformHeight,
-	kUniformWidth,
-	kUniformRadius,
-	kUniformDir,
-	kUniformCount
-};
-static const char* kUniformNames[kUniformCount] = {
-	"s_texture",
-	"s_overlay",
-	"height",
-	"width",
-	"radius",
-	"dir",
-};
-static GLint g_Uniforms[kUniformCount];
-
-
-
 @interface ShaderRenderer ()
-//- (BOOL)loadShader:(NSString *) shader WithTextures:(NSArray *) textures Attributes:(NSArray *) attributes;
 {
-//	GLint textureUniforms[2];
-//	
-//	NSArray *textureNames;
-
-
+	
 }
 @end
 
 @implementation ShaderRenderer
 
-@synthesize width,height;
+@synthesize width,height,renderedLayer;
 
 // Create an ES 2.0 context
-- (id) initWithShader:(NSArray *) shaderList onScreen:(BOOL)isOnScreen2 textures:(NSArray *) texures Uniforms:(NSArray *) uniforms
+- (id) initWithShader:(NSArray *) shaderArray onScreen:(BOOL)isOnScreen2
 {
 	if (self = [super init])
 	{
 		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 		
-		if (!context || ![EAGLContext setCurrentContext:context] || ![self loadShader:shaderList WithTextures:texures Uniforms:uniforms])
+		shaderList = shaderArray;
+		
+		if (!context || ![EAGLContext setCurrentContext:context] || ![self loadShader])
 		{
 			[self release];
 			return nil;
@@ -61,100 +34,152 @@ static GLint g_Uniforms[kUniformCount];
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
 		
 	}
-
-	if([shaderList count ]>1)
-		isOnScreenRender = NO;
+	
 	isOnScreenRender=isOnScreen2;
-
-
+	
 	
 	return self;
 }
 
-- (void)renderWithTextures:(NSArray *) textures Uniforms:(NSArray *) uniforms
+- (void)renderWithTextures:(NSArray *) shaderArray
 {
 	
-	
-	
+	shaderList = shaderArray;
+
 	[EAGLContext setCurrentContext:context];
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
+	for (int i = 0; i<[shaderList count];i++) {
+		
+		ShaderProperties *shaderProperties = [shaderList objectAtIndex:i];
+		UIImage *img;
+		
+		GLShader *shader = [shaderProperties shader];
+		
+		
+		if([shaderList count] > 1 && i != 0){
+			[shader loadTextureFromFrameBuffer:defaultFramebuffer Width:width Height:height];
+		}else{
+			//			NSLog(@"load texture from image");
+			[shader loadTexture];
+		}
+		
+		if(i != [shaderList count] -1 ||([shaderList count] == 1 && !isOnScreenRender)){
+			
+			[self renderOnFrameBuffer:shaderProperties];
+			
+		}else{
+			
+			[self renderOnLayer:shaderProperties];
+			
+		}
+		
+		
+	}
+	
+	//	NSLog(@"finish rendering");
+	
+}
+
+-(void)renderOnFrameBuffer:(ShaderProperties *)shaderProperties{
+	
+	
+	GLShader *shader = [shaderProperties shader];
+	
+	[self configRenderBufferFromFrameBuffer];
+
 	glViewport(0, 0, backingWidth, backingHeight);
 	
-	glClearColor(0.5f, 0.4f, 0.5f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(shader.prog);
 	
-	glUseProgram(shaders.prog);
+	[shader loadUniforms];
 	
-	shaders.textureArray = textures;
-	
-	[shaders loadTexture];
-	
-	[shaders setUniformArray:uniforms];
-
-	[shaders loadUniforms];
-	for (int i = 0; i<[shaders.textureArray count]; i++) {
-		GLTexture *texture = [shaders.textureArray objectAtIndex:i];
+	for (int i = 0; i<[shader.textureArray count]; i++) {
+		GLTexture *texture = [shader.textureArray objectAtIndex:i];
 		
 		glActiveTexture (GL_TEXTURE0+i);
 		glBindTexture (GL_TEXTURE_2D, texture.textureId);
 		glUniform1i (texture.textureLocation, i);
-
+		
 	}
-
 	
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	
-	
 	glFinish ();
 	
+	UIImage *img = [self getRenderedImage];
 	
-	
-	
-	if(isOnScreenRender)
-	{
-		[context presentRenderbuffer:GL_RENDERBUFFER];
-	}
+	NSLog(@"");
 	
 }
 
--(UIImage *)getRenderedImage{
+-(void)renderOnLayer:(ShaderProperties *)shaderProperties{
+	
+	
+	GLShader *shader = [shaderProperties shader];
+	
+	[self configRenderBufferFromLayer];
+	
+	glViewport(0, 0, backingWidth, backingHeight);
+	
+	
+	glUseProgram(shader.prog);
+	
+	[shader loadUniforms];
+	
+	for (int i = 0; i<[shader.textureArray count]; i++) {
+		GLTexture *texture = [shader.textureArray objectAtIndex:i];
+		
+		glActiveTexture (GL_TEXTURE0+i);
+		glBindTexture (GL_TEXTURE_2D, texture.textureId);
+		glUniform1i (texture.textureLocation, i);
+		
+	}
+	
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	
+	glFinish ();
+	
+	[context presentRenderbuffer:GL_RENDERBUFFER];
+	
+}
 
+
+-(UIImage *)getRenderedImage{
+	
 	size_t size = backingWidth * backingHeight * 4;
 	GLvoid *pixels = malloc(size);
-	NSLog(@"t9.2");
+	//	NSLog(@"t9.2");
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
-	NSLog(@"t9.3");
+	//	NSLog(@"t9.3");
 	glReadPixels(0, 0, backingWidth, backingHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 	
 	UIImage *image = [Utility ImageFromPixel:pixels width:backingWidth height:backingHeight orientation:UIImageOrientationDown];
 	
+	
+	//	free(pixels);
 	return image;
 }
 
 
 
-- (BOOL)loadShader:(NSArray *) shaderList WithTextures:(NSArray *) textures Uniforms:(NSArray *) uniforms {
+- (BOOL)loadShader{
 	
 	
-	for (NSString *shader in shaderList) {
-		shaders  = [[GLShader alloc] init];
-		[shaders setTextureArray:textures];
-		
-		[shaders setUniformArray:uniforms];
+	for (ShaderProperties *shaderProperties in shaderList) {
+		GLShader *shader  = [shaderProperties shader];
 		
 		// create shader program
-		if (![shaders LoadShader:shader])
+		if (![shader compileShader:shaderProperties.fileName])
 		{
 			return NO;
 		}
 		
-		[shaders loadTexture];
+		[shader loadTexture];
 		
-		[shaders loadUniforms];
-	
+		[shader loadUniforms];
+		
 		[self loadAttributesOnInitialization];
 		
 	}
@@ -194,40 +219,14 @@ static GLint g_Uniforms[kUniformCount];
 }
 
 
-//-(void)loadUniformsOnRender:(NSDictionary *) uniforms{
-//	
-//	
-//	NSValue *dir = [uniforms objectForKey:@"dir"];
-//	
-//	CGPoint direction = [dir CGPointValue];
-//	
-//
-//	glUniform1f(g_Uniforms[kUniformWidth], [[uniforms objectForKey:@"width"] floatValue]);
-//	glUniform1f(g_Uniforms[kUniformHeight], [[uniforms objectForKey:@"height"] floatValue]);
-//	glUniform1f(g_Uniforms[kUniformRadius], [[uniforms objectForKey:@"radius"] floatValue]);
-//
-//	glUniform2f(g_Uniforms[kUniformDir], direction.x, direction.y);
-//}
-
-
-
-- (BOOL) resizeFromLayer:(CAEAGLLayer *)layer
+- (BOOL) configRenderBufferFromFrameBuffer
 {
-	// Allocate color buffer backing based on the current layer size
 	
-	if (layer != Nil) {
-		renderedLayer = layer;
-	}
 	
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
-	if(isOnScreenRender)
-		[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:renderedLayer];
-	else{
-		backingWidth = width;
-		backingHeight = height;
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, backingWidth, backingHeight);
-	}
+	backingWidth = width;
+	backingHeight = height;
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, backingWidth, backingHeight);
 	
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
@@ -239,6 +238,30 @@ static GLint g_Uniforms[kUniformCount];
 	}
 	
 	return YES;
+}
+
+-(void)setRenderedLayer:(CAEAGLLayer *)renderedLayer2{
+	
+	
+	renderedLayer = renderedLayer2;
+	
+	[self configRenderBufferFromLayer];
+	
+}
+
+-(void) configRenderBufferFromLayer{
+	
+
+		[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:renderedLayer];
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
+		
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		{
+			NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+			//		return NO;
+		}
+	
 }
 
 - (void) dealloc
@@ -256,8 +279,9 @@ static GLint g_Uniforms[kUniformCount];
 		colorRenderbuffer = 0;
 	}
 	
-	
-	[shaders DestroyShader];
+	for (ShaderProperties *shaderProperties in shaderList) {
+		[shaderProperties.shader destroyShader];
+	}
 	
 	// tear down context
 	if ([EAGLContext currentContext] == context)

@@ -8,15 +8,12 @@
 @interface EAGLView : UIView
 {    
 @private
-//	ShaderRenderer  *renderer;
 
-//	id displayLink;
 }
 
 
 @property(readwrite,retain) ShaderRenderer *renderer;
 
-@property(readwrite) struct TextureInput texureInput;
 
 - (void) drawView:(id)sender;
 

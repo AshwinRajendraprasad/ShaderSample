@@ -10,14 +10,12 @@
 
 
 @interface ViewController (){
-
+	
 	NSString *_sessionPreset;
 	
 	AVCaptureSession *_session;
 	CVImageBufferRef pixelBuffer2;
 	
-	
-
 }
 
 @end
@@ -25,8 +23,8 @@
 @implementation ViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
+	[super viewDidLoad];
+	// Do any additional setup after loading the view.
 	
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 	{
@@ -45,15 +43,14 @@
 	}
 	
 	[self setupAVCapture];
-
 	
-	textureArray = [self getShader1Texures];
 	
-	uniformArray = [self getShader1Uniforms];
+	[self getShader];
 	
-	NSArray *shaderArray = [NSArray arrayWithObjects:@"horzBlurShader",nil];
 	
-	renderer = [[ShaderRenderer alloc] initWithShader:shaderArray onScreen:YES textures:textureArray Uniforms:uniformArray];
+	shaderArray = [self getShader];// [NSArray arrayWithObjects:@"horzBlurShader",@"shader",nil];
+	
+	renderer = [[ShaderRenderer alloc] initWithShader:shaderArray onScreen:YES];
 	
 	renderer.width = 640;
 	renderer.height = 852;
@@ -63,6 +60,38 @@
 
 }
 
+-(NSArray *) getShader{
+	
+	
+	NSArray *textureArray = [self getShader1Texures];
+	
+	NSArray *uniformArray = [self getShader1Uniforms];
+	
+	
+	ShaderProperties *shader1 = [[ShaderProperties alloc] init];
+	
+	shader1.shader = [[GLShader alloc] init];
+	
+	shader1.fileName = @"shader";
+	shader1.textureArray = textureArray;
+	shader1.uniformArray = uniformArray;
+	
+	NSArray *texture2Array = [self getShader2Texures];
+	
+	
+	ShaderProperties *shader2 = [[ShaderProperties alloc] init];
+	shader2.shader = [[GLShader alloc] init];
+	shader2.fileName = @"horzBlurShader";
+	shader2.textureArray = texture2Array;
+	shader2.uniformArray = uniformArray;
+
+	
+	NSArray *array = [[NSArray alloc] initWithObjects:shader1,nil];
+	
+	return array;
+	
+}
+
 
 -(NSArray *) getShader1Texures{
 	
@@ -70,7 +99,7 @@
 	UIImage *image = [[UIImage alloc] initWithData:texData];
 	NSData *texData2 = [[NSData alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"oil" ofType:@"jpg"]];
 	UIImage *image2 = [[UIImage alloc] initWithData:texData2];
-
+	
 	GLTexture *texture1 = [[GLTexture alloc] init];
 	
 	[texture1 setTextureName:@"s_overlay"];
@@ -79,23 +108,40 @@
 	[texture1 setTextureImage:image];
 	
 	
-
+	
 	GLTexture *texture2 = [[GLTexture alloc] init];
 	
 	[texture2 setTextureName:@"s_texture"];
 	[texture2 setTextureId:2];
 	[texture2 setTextureType:CVImageBuffer];
-//	[texture2 setTextureImage:image2];
+	//	[texture2 setTextureImage:image2];
 	
 	NSArray *array = [NSArray arrayWithObjects:texture1, texture2, nil];
-
+	
 	
 	return array;
+	
+}
 
+-(NSArray *) getShader2Texures{
+	
+	
+	GLTexture *texture1 = [[GLTexture alloc] init];
+	
+	[texture1 setTextureName:@"s_texture"];
+	[texture1 setTextureId:1];
+	[texture1 setTextureType:FrameBuffer];
+
+	
+	NSArray *array = [NSArray arrayWithObjects:texture1, nil];
+	
+	
+	return array;
+	
 }
 
 -(NSArray *) getShader1Uniforms{
-
+	
 	CGPoint cgpoint = CGPointMake(1.0, 0.0);
 	float blurRadius = 10.0;
 	GLUniform *uniform1 = [[GLUniform alloc] init];
@@ -117,17 +163,17 @@
 	GLUniform *uniform4 = [[GLUniform alloc] init];
 	
 	[uniform4 setUniformName:@"dir"];
-
+	
 	
 	[uniform4 setUniformData:[NSValue valueWithCGPoint:cgpoint]];
-
-
+	
+	
 	
 	NSArray *array = [NSArray arrayWithObjects:uniform1, uniform2,uniform3,uniform4, nil];
 	
 	
 	return array;
-
+	
 }
 
 - (void)setupAVCapture
@@ -179,43 +225,46 @@
 	
 	CVImageBufferRef pixelBuffer;
 	pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-
+	
 	CVPixelBufferLockBaseAddress(pixelBuffer, 0);
 	
 	size_t width = CVPixelBufferGetWidth(pixelBuffer);
 	size_t height = CVPixelBufferGetHeight(pixelBuffer);
 	
-
 	
-	
-	for (GLUniform *uni in uniformArray) {
+	for (ShaderProperties *shaderProperties in shaderArray) {
 		
 		
-		if ([uni.uniformName isEqualToString:@"width"]) {
-			[uni setUniformData:[NSNumber numberWithFloat:width ]];
-		}else if ([uni.uniformName isEqualToString:@"height"]){
-		[uni setUniformData:[NSNumber numberWithFloat:height ]];
-		
+		for (GLUniform *uni in shaderProperties.uniformArray) {
+			
+			
+			if ([uni.uniformName isEqualToString:@"width"]) {
+				[uni setUniformData:[NSNumber numberWithFloat:width]];
+			}else if ([uni.uniformName isEqualToString:@"height"]){
+				[uni setUniformData:[NSNumber numberWithFloat:height]];
+				
+			}
+			
 		}
 		
+		for (GLTexture *texture in shaderProperties.textureArray) {
+			if(texture.textureType == CVImageBuffer)
+				[texture setTextureImageBuffer:pixelBuffer];
+		}
+		
+		
 	}
-
+	
+	[renderer renderWithTextures:shaderArray];
 	
 	
-	
-	[((GLTexture *)[textureArray objectAtIndex:1]) setTextureImageBuffer:pixelBuffer];
-	
-	[renderer renderWithTextures:textureArray Uniforms:uniformArray];
-
-
 	CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-
 	
 	
 }
 - (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+	[super didReceiveMemoryWarning];
+	// Dispose of any resources that can be recreated.
 }
 
 

@@ -21,11 +21,12 @@ enum ShaderAttrib {
 @property(readwrite,copy) NSArray *textureArray;
 @property(readwrite,copy) NSArray *uniformArray;
 
--(bool) LoadShader: (NSString*) shaderFile;
--(void) DestroyShader;
+-(bool) compileShader: (NSString*) shaderFile;
+-(void) destroyShader;
 -(GLint) validateProgram:(GLuint )prog;
 -(void)loadTexture;
 -(void)loadUniforms;
+-(void)loadTextureFromFrameBuffer:(GLint) framebuffer Width:(int)width Height:(int)height;
 
 @end
 

@@ -20,6 +20,7 @@
 		0C264DF91BAD8FCA0039E6BA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C264DF81BAD8FCA0039E6BA /* CoreMedia.framework */; };
 		0C264DFB1BAD8FF30039E6BA /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C264DFA1BAD8FF30039E6BA /* CoreVideo.framework */; };
 		0C264DFE1BAD9F670039E6BA /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C264DFD1BAD9F670039E6BA /* Utility.m */; };
+		0C26BF9E1BBB9D2F003077D4 /* ShaderProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C26BF9D1BBB9D2F003077D4 /* ShaderProperties.m */; };
 		0C26DC141BAE7053008294F3 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C26DC131BAE7053008294F3 /* CoreImage.framework */; };
 		0C26DC161BAE7478008294F3 /* shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 0C26DC151BAE7478008294F3 /* shader.vsh */; };
 		0C26DC181BAE7489008294F3 /* shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 0C26DC171BAE7489008294F3 /* shader.fsh */; };
@@ -54,6 +55,8 @@
 		0C264DFA1BAD8FF30039E6BA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0C264DFC1BAD9F670039E6BA /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
 		0C264DFD1BAD9F670039E6BA /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
+		0C26BF9C1BBB9D2F003077D4 /* ShaderProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProperties.h; sourceTree = "<group>"; };
+		0C26BF9D1BBB9D2F003077D4 /* ShaderProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderProperties.m; sourceTree = "<group>"; };
 		0C26DC131BAE7053008294F3 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		0C26DC151BAE7478008294F3 /* shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.vsh; sourceTree = "<group>"; };
 		0C26DC171BAE7489008294F3 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
@@ -120,6 +123,8 @@
 				0C264DFD1BAD9F670039E6BA /* Utility.m */,
 				0CB99F081BBA6DCB008D3919 /* GLUniform.h */,
 				0CB99F091BBA6DCB008D3919 /* GLUniform.m */,
+				0C26BF9C1BBB9D2F003077D4 /* ShaderProperties.h */,
+				0C26BF9D1BBB9D2F003077D4 /* ShaderProperties.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -262,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C14EB751BAE9669007FF8B0 /* horzBlurShader.fsh in Sources */,
+				0C26BF9E1BBB9D2F003077D4 /* ShaderProperties.m in Sources */,
 				0C14EB761BAE9669007FF8B0 /* horzBlurShader.vsh in Sources */,
 				0CB99F071BBA6DB3008D3919 /* GLTexture.m in Sources */,
 				0C26DC191BAE753E008294F3 /* shader.vsh in Sources */,

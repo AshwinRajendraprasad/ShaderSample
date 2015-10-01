@@ -10,14 +10,8 @@
 #import <OpenGLES/EAGLDrawable.h>
 #import "Utility.h"
 #import "GLTexture.h"
-struct TextureInput{
+#import "ShaderProperties.h"
 
-	CVImageBufferRef pixelBuffer;
-	UIImage *image;
-	CAEAGLLayer *renderedLayer;
-
-
-};
 
 @interface ShaderRenderer : NSObject
 {
@@ -33,23 +27,20 @@ struct TextureInput{
 	// The OpenGL names for the framebuffer and renderbuffer used to render to this view
 	GLuint defaultFramebuffer, colorRenderbuffer;
 	
-	/* the shader program object */
-//	struct ShaderProperties program;
-	
-	GLfloat rotz;
-	
-	GLShader *shaders;
+//	GLShader *shaders;
 	BOOL isOnScreenRender;
-	CAEAGLLayer *renderedLayer;
+	
+	NSArray * shaderList;
 	
 }
 
 @property(readwrite) int width;
 @property(readwrite) int height;
+@property(readwrite,retain,nonatomic) CAEAGLLayer *renderedLayer;
 
-- (void)renderWithTextures:(NSArray *) textures Uniforms:(NSArray *) uniforms;
-- (BOOL) resizeFromLayer:(CAEAGLLayer *)layer;
-- (id) initWithShader:(NSArray *) shaderList  onScreen:(BOOL)isOnScreen2 textures:(NSArray *) texures Uniforms:(NSArray *) uniforms;
+- (void)renderWithTextures:(NSArray *) shaderArray;
+
+- (id) initWithShader:(NSArray *) shaderList  onScreen:(BOOL)isOnScreen2;
 -(UIImage *)getRenderedImage;
 
 @end

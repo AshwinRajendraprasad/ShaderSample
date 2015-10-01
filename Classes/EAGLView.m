@@ -3,7 +3,7 @@
 
 @implementation EAGLView
 
-@synthesize renderer,texureInput;
+@synthesize renderer;
 
 // You must implement this method
 + (Class) layerClass
@@ -22,6 +22,8 @@
         eaglLayer.opaque = TRUE;
         eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
                                         [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
+		
+		
 
     }
 	
@@ -30,12 +32,12 @@
 
 - (void) drawView:(id)sender
 {
-//    [renderer renderWithTextures:texureInput uniforms:<#(NSDictionary *)#>];
 }
 
 - (void) layoutSubviews
 {
-	[renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
+	
+	[renderer setRenderedLayer:(CAEAGLLayer*)self.layer];
     [self drawView:nil];
 }
 
