@@ -138,12 +138,12 @@ const char* kShaderAttribNames[kAttrCount] = {
 	
 }
 
--(void)loadTextureFromFrameBuffer:(GLint) framebuffer Width:(int)width Height:(int)height{
+-(void)loadTextureFromFrameBuffer:(GLint) framebuffer Tex:(GLuint) texId Width:(int)width Height:(int)height{
 
 
 	for (int i = 0; i < [textureArray count]; ++i){
 		GLTexture *glTexture = [textureArray objectAtIndex:i];
-		glTexture.textureId = i+1;
+		glTexture.textureId = texId;
 		glTexture.textureLocation = glGetUniformLocation(prog, [glTexture.textureName UTF8String]);
 		
 		[glTexture loadTextureFromFrameBuffer:framebuffer Width:width Height:height];
@@ -156,12 +156,23 @@ const char* kShaderAttribNames[kAttrCount] = {
 
 
 
--(void)loadUniforms{
+-(void)loadUniformsWithTransform:(GLKMatrix4) mat{
 	
 	for (int i = 0; i < [uniformArray count]; ++i){
 		GLUniform *glUniform = [uniformArray objectAtIndex:i];
 		
 		glUniform.uniformLocation = glGetUniformLocation(prog, [glUniform.uniformName UTF8String]);
+		
+		if(glUniform.uniformDataType == Matrix4_Type){
+		
+			
+			GLKEffectPropertyTransform *matObj = [[GLKEffectPropertyTransform alloc] init];
+			
+			[matObj setProjectionMatrix:mat];
+
+			
+			[glUniform setUniformData:matObj];
+		}
 		
 		[glUniform loadUniform];
 		

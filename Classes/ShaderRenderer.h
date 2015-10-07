@@ -1,5 +1,7 @@
 //#import "ESRenderer.h"
 
+#import <Foundation/Foundation.h>
+
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 #include "GLShader.h"
@@ -13,24 +15,11 @@
 #import "ShaderProperties.h"
 
 
+
 @interface ShaderRenderer : NSObject
 {
-	
-	
-@private
-	EAGLContext *context;
-	
-	// The pixel dimensions of the CAEAGLLayer
-	GLint backingWidth;
-	GLint backingHeight;
-	
-	// The OpenGL names for the framebuffer and renderbuffer used to render to this view
-	GLuint defaultFramebuffer, colorRenderbuffer;
-	
-//	GLShader *shaders;
-	BOOL isOnScreenRender;
-	
-	NSArray * shaderList;
+
+
 	
 }
 

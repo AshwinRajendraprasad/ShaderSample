@@ -46,7 +46,10 @@
 	return image;
 	
 }
-
+ void myProviderReleaseData (void *info,const void *data,size_t size)
+{
+	free((void*)data);
+}
 
 +(UIImage *)getBlurImage:(UIImage *)image
 {
@@ -66,19 +69,44 @@
 +(UIImage *) ImageFromPixel:(void *)data width:(GLint)width height:(GLint)height orientation:(UIImageOrientation)orientation{
 
 	size_t size = width * height * 4;
-	size_t bitsPerComponent = 8;
-	size_t bitsPerPixel = 32;
-	size_t bytesPerRow = width * bitsPerPixel / bitsPerComponent;
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault;
-	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, data, size, NULL);
-	CGImageRef cgImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, NULL, FALSE, kCGRenderingIntentDefault);
-	CGDataProviderRelease(provider);
-	
-	UIImage *image = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:orientation];
-	CGImageRelease(cgImage);
-	CGColorSpaceRelease(colorSpace);
 
-	return image;
+	size_t bitsPerComponent         = 8;
+	size_t bitsPerPixel             = 32;
+	size_t bytesPerRow              = width * bitsPerPixel / bitsPerComponent;
+	
+	CGColorSpaceRef colorspace      = CGColorSpaceCreateDeviceRGB();
+	CGBitmapInfo bitmapInfo         =  kCGBitmapByteOrderDefault;
+	CGDataProviderRef provider      = CGDataProviderCreateWithData(NULL, data, size, NULL);
+	
+	CGImageRef newImageRef = CGImageCreate (
+											width,
+											height,
+											bitsPerComponent,
+											bitsPerPixel,
+											bytesPerRow,
+											colorspace,
+											bitmapInfo,
+											provider,
+											NULL,
+											false,
+											kCGRenderingIntentDefault
+											);
+
+	CGContextRef context = CGBitmapContextCreate(data,width,height,bitsPerComponent,bytesPerRow,colorspace,kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+	
+	CGContextDrawImage(context, CGRectMake(0,0,width,height),newImageRef);
+	UIImage *newImage2 = [UIImage imageWithCGImage:CGBitmapContextCreateImage(context)];
+	
+	free(data);
+	CGContextRelease(context);
+	CGColorSpaceRelease(colorspace);
+	CGDataProviderRelease(provider);
+	CGImageRelease(newImageRef);
+	
+	
+	return newImage2;
+
 }
+
+
 @end

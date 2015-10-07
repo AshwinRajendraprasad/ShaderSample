@@ -25,8 +25,9 @@ enum ShaderAttrib {
 -(void) destroyShader;
 -(GLint) validateProgram:(GLuint )prog;
 -(void)loadTexture;
--(void)loadUniforms;
--(void)loadTextureFromFrameBuffer:(GLint) framebuffer Width:(int)width Height:(int)height;
+-(void)loadUniformsWithTransform:(GLKMatrix4) mat;
+//-(void)loadTextureFromFrameBuffer:(GLint) framebuffer Width:(int)width Height:(int)height;
+-(void)loadTextureFromFrameBuffer:(GLint) framebuffer Tex:(GLuint) texId Width:(int)width Height:(int)height;
 
 @end
 

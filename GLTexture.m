@@ -39,7 +39,7 @@
 	
 	free(imageData);
 	//	[image release];
-//	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 
@@ -62,25 +62,18 @@
 
 -(void)loadTextureFromFrameBuffer:(GLint) frameBuffer Width:(int) width Height:(int) height{
 	
-	
-//	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-//	glBindRenderbuffer(GL_RENDERBUFFER, textureId);
-//	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, textureId);
-	
-//	glEnable(GL_TEXTURE_2D);
-//	glActiveTexture (GL_TEXTURE0);
+
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
-//	glBindTexture(GL_TEXTURE_2D, 0);
-//	GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-//	glDrawBuffers(1, DrawBuffers);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	
 	
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
@@ -104,7 +97,7 @@
 	size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
 	int frameHeight = CVPixelBufferGetHeight(pixelBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)bytesPerRow / 4, (GLsizei)frameHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, CVPixelBufferGetBaseAddress(pixelBuffer));
-//	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	
 }
 @end
