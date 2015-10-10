@@ -68,28 +68,31 @@
 	NSArray *uniformArray = [self getShader1Uniforms:YES];
 	
 	
-	ShaderProperties *shader1 = [[ShaderProperties alloc] init];
+//	ShaderProperties *shader1 = [[ShaderProperties alloc] init];
 	
-	shader1.shader = [[GLShader alloc] init];
+	GLShader *shader1 = [[GLShader alloc] init];
 	
-	shader1.fileName = @"shader";
+	shader1.vertexShaderFileName = @"shader";
+	shader1.fragmentShaderFileName = @"shader";
 	shader1.textureArray = textureArray;
 	shader1.uniformArray = uniformArray;
 	
 	NSArray *texture2Array = [self getShader2Texures];
 	
 	
-	ShaderProperties *shader2 = [[ShaderProperties alloc] init];
-	shader2.shader = [[GLShader alloc] init];
-	shader2.fileName = @"horzBlurShader";
+//	ShaderProperties *shader2 = [[ShaderProperties alloc] init];
+	GLShader *shader2 = [[GLShader alloc] init];
+	shader2.vertexShaderFileName = @"horzBlurShader";
+	shader2.fragmentShaderFileName = @"horzBlurShader";
 	shader2.textureArray = textureArray;
 	shader2.uniformArray = uniformArray;
 	
 	NSArray *uniformArray2 = [self getShader1Uniforms:NO];
 	
-	ShaderProperties *shader3 = [[ShaderProperties alloc] init];
-	shader3.shader = [[GLShader alloc] init];
-	shader3.fileName = @"horzBlurShader";
+//	ShaderProperties *shader3 = [[ShaderProperties alloc] init];
+	GLShader *shader3 = [[GLShader alloc] init];
+	shader3.vertexShaderFileName = @"horzBlurShader";
+	shader3.fragmentShaderFileName = @"horzBlurShader";
 	shader3.textureArray = texture2Array;
 	shader3.uniformArray = uniformArray2;
 
@@ -254,10 +257,10 @@
 	size_t height = CVPixelBufferGetHeight(pixelBuffer);
 	
 	
-	for (ShaderProperties *shaderProperties in shaderArray) {
+	for (GLShader *shader in shaderArray) {
 		
 		
-		for (GLUniform *uni in shaderProperties.uniformArray) {
+		for (GLUniform *uni in shader.uniformArray) {
 			
 			
 			if ([uni.uniformName isEqualToString:@"width"]) {
@@ -269,7 +272,7 @@
 			
 		}
 		
-		for (GLTexture *texture in shaderProperties.textureArray) {
+		for (GLTexture *texture in shader.textureArray) {
 			if(texture.textureType == CVImageBuffer)
 				[texture setTextureImageBuffer:pixelBuffer];
 		}

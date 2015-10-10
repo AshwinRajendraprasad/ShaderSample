@@ -18,7 +18,7 @@ const char* kShaderAttribNames[kAttrCount] = {
 
 @implementation GLShader
 
-@synthesize prog,textureArray,uniformArray;
+@synthesize prog,textureArray,uniformArray,fragmentShaderFileName,vertexShaderFileName;
 
 
 
@@ -66,24 +66,24 @@ const char* kShaderAttribNames[kAttrCount] = {
 //-(bool) LoadShader: (NSString*) file cc:(struct Shader* )oshader;
 
 
--(bool) compileShader: (NSString*) shaderFile
+-(bool) compileShader
 {
 	prog = vertShader = fragShader = 0;
 	NSString *vertShaderPathname, *fragShaderPathname;
 	
-	//	NSString *shaderFile = [shaderFileList objectAtIndex:0];
-	
+//	NSString *vertexShaderFile = shader.vertexShaderFileName;
+//	NSString *fragmentShaderFile = shader.fragmentShaderFileName ;
 	
 	prog = glCreateProgram();
 	
-	vertShaderPathname = [[NSBundle mainBundle] pathForResource:shaderFile ofType:@"vsh"];
+	vertShaderPathname = [[NSBundle mainBundle] pathForResource:vertexShaderFileName ofType:@"vsh"];
 	
 	if (![self compileShader:&vertShader type:GL_VERTEX_SHADER defines:"#define VERTEX\n" file:vertShaderPathname]) {
 		
 		[self destroyShader];
 		return false;
 	}
-	fragShaderPathname = [[NSBundle mainBundle] pathForResource:shaderFile ofType:@"fsh"];
+	fragShaderPathname = [[NSBundle mainBundle] pathForResource:fragmentShaderFileName ofType:@"fsh"];
 	if (![self compileShader:&fragShader type:GL_FRAGMENT_SHADER defines:"#define FRAGMENT\n" file:fragShaderPathname]) {
 		[self destroyShader];
 		return false;

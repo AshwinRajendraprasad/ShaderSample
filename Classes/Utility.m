@@ -68,6 +68,11 @@
 
 +(UIImage *) ImageFromPixel:(void *)data width:(GLint)width height:(GLint)height orientation:(UIImageOrientation)orientation{
 
+	UIImage *newImage2 ;
+	
+//	@synchronized(@"imagefrompix") {
+	
+	
 	size_t size = width * height * 4;
 
 	size_t bitsPerComponent         = 8;
@@ -95,14 +100,14 @@
 	CGContextRef context = CGBitmapContextCreate(data,width,height,bitsPerComponent,bytesPerRow,colorspace,kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
 	
 	CGContextDrawImage(context, CGRectMake(0,0,width,height),newImageRef);
-	UIImage *newImage2 = [UIImage imageWithCGImage:CGBitmapContextCreateImage(context)];
+	 newImage2 = [UIImage imageWithCGImage:CGBitmapContextCreateImage(context)];
 	
 	free(data);
 	CGContextRelease(context);
 	CGColorSpaceRelease(colorspace);
 	CGDataProviderRelease(provider);
 	CGImageRelease(newImageRef);
-	
+//	}
 	
 	return newImage2;
 

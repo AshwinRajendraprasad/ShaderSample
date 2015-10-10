@@ -80,7 +80,7 @@
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 	
@@ -100,10 +100,10 @@
 	GLKMatrix4 contentTransform = GLKMatrix4Multiply(GLKMatrix4MakeScale(-1, 1, 1), GLKMatrix4MakeRotation(-M_PI_2, 0, 0, 1));
 	for (int i = 0; i<[shaderList count];i++) {
 		int fr = i%2;
-		ShaderProperties *shaderProperties = [shaderList objectAtIndex:i];
+//		ShaderProperties *shaderProperties = [shaderList objectAtIndex:i];
 		//		UIImage *img;
 		
-		GLShader *shader = [shaderProperties shader];
+		GLShader *shader = [shaderList objectAtIndex:i];
 		
 		int prev = (fr+1)%2;
 		if([shaderList count] > 1 && i != 0){
@@ -120,13 +120,13 @@
 			
 			[self genFrameBuffer:renderFrameBuffer[fr] ToRenderInTex:textureId[fr]];
 			
-			[self renderOnFrameBuffer:renderFrameBuffer[fr] WithShader:shaderProperties];
+			[self renderOnFrameBuffer:renderFrameBuffer[fr] WithShader:shader];
 			m = GLKMatrix4Multiply(contentModeTransform, contentTransform);
 		}else{
 			
 			
 			
-			[self renderOnLayer:shaderProperties];
+			[self renderOnLayer:shader];
 			
 		}
 		
@@ -134,12 +134,12 @@
 	
 }
 
--(void)renderOnFrameBuffer:(GLint) frameBuffer WithShader:(ShaderProperties *)shaderProperties{
+-(void)renderOnFrameBuffer:(GLint) frameBuffer WithShader:(GLShader *)shader{
 	
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	
-	GLShader *shader = [shaderProperties shader];
+//	GLShader *shader = [shaderProperties shader];
 	
 	[self configRenderBufferFromFrameBuffer:frameBuffer];
 	
@@ -169,13 +169,13 @@
 	
 }
 
--(void)renderOnLayer:(ShaderProperties *)shaderProperties{
+-(void)renderOnLayer:(GLShader *)shader{
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
 	
-	GLShader *shader = [shaderProperties shader];
+//	GLShader *shader = [shaderProperties shader];
 	
 	[self configRenderBufferFromLayer];
 	
@@ -224,11 +224,11 @@
 - (BOOL)loadShader{
 	
 	
-	for (ShaderProperties *shaderProperties in shaderList) {
-		GLShader *shader  = [shaderProperties shader];
+	for (GLShader *shader in shaderList) {
+//		GLShader *shader  = [shaderProperties shader];
 		
 		// create shader program
-		if (![shader compileShader:shaderProperties.fileName])
+		if (![shader compileShader])
 		{
 			return NO;
 		}
@@ -343,8 +343,8 @@
 		colorRenderbuffer = 0;
 	}
 	
-	for (ShaderProperties *shaderProperties in shaderList) {
-		[shaderProperties.shader destroyShader];
+	for (GLShader *shader in shaderList) {
+		[shader destroyShader];
 	}
 	
 	// tear down context

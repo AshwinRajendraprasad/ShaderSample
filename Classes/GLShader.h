@@ -20,8 +20,10 @@ enum ShaderAttrib {
 @property(readonly) GLint prog;
 @property(readwrite,copy) NSArray *textureArray;
 @property(readwrite,copy) NSArray *uniformArray;
+@property(readwrite,copy) NSString *fragmentShaderFileName;
+@property(readwrite,copy) NSString *vertexShaderFileName;
 
--(bool) compileShader: (NSString*) shaderFile;
+-(bool) compileShader;
 -(void) destroyShader;
 -(GLint) validateProgram:(GLuint )prog;
 -(void)loadTexture;

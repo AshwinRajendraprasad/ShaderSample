@@ -14,7 +14,6 @@
 #import "Utility.h"
 #import "GLTexture.h"
 #import "GLUniform.h"
-#import "ShaderProperties.h"
 
 @interface ViewController : UIViewController<AVCaptureVideoDataOutputSampleBufferDelegate>
 

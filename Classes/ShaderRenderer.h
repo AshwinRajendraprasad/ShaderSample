@@ -12,7 +12,7 @@
 #import <OpenGLES/EAGLDrawable.h>
 #import "Utility.h"
 #import "GLTexture.h"
-#import "ShaderProperties.h"
+
 
 
 
