@@ -26,12 +26,5 @@
 	
 }
 
-- (void) dealloc
-{
-	[window release];
-	[glView release];
-	
-	[super dealloc];
-}
 
 @end

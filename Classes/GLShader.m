@@ -71,8 +71,8 @@ const char* kShaderAttribNames[kAttrCount] = {
 	prog = vertShader = fragShader = 0;
 	NSString *vertShaderPathname, *fragShaderPathname;
 	
-//	NSString *vertexShaderFile = shader.vertexShaderFileName;
-//	NSString *fragmentShaderFile = shader.fragmentShaderFileName ;
+	//	NSString *vertexShaderFile = shader.vertexShaderFileName;
+	//	NSString *fragmentShaderFile = shader.fragmentShaderFileName ;
 	
 	prog = glCreateProgram();
 	
@@ -129,6 +129,8 @@ const char* kShaderAttribNames[kAttrCount] = {
 	
 	for (int i = 0; i < [textureArray count]; ++i){
 		GLTexture *glTexture = [textureArray objectAtIndex:i];
+		if(glTexture.textureType == FrameBuffer)
+			continue;
 		glTexture.textureId = i+1;
 		glTexture.textureLocation = glGetUniformLocation(prog, [glTexture.textureName UTF8String]);
 		
@@ -139,17 +141,29 @@ const char* kShaderAttribNames[kAttrCount] = {
 }
 
 -(void)loadTextureFromFrameBuffer:(GLint) framebuffer Tex:(GLuint) texId Width:(int)width Height:(int)height{
-
-
+	
+	
 	for (int i = 0; i < [textureArray count]; ++i){
+		
 		GLTexture *glTexture = [textureArray objectAtIndex:i];
+		
+		if(glTexture.textureType != FrameBuffer)
+		{
+			glTexture.textureId = i+1;
+			glTexture.textureLocation = glGetUniformLocation(prog, [glTexture.textureName UTF8String]);
+			
+			[glTexture loadTexture];
+		}
+		else{
+//			continue;
+		
 		glTexture.textureId = texId;
 		glTexture.textureLocation = glGetUniformLocation(prog, [glTexture.textureName UTF8String]);
 		
 		[glTexture loadTextureFromFrameBuffer:framebuffer Width:width Height:height];
-		
+		}
 	}
-
+	
 }
 
 
@@ -164,12 +178,12 @@ const char* kShaderAttribNames[kAttrCount] = {
 		glUniform.uniformLocation = glGetUniformLocation(prog, [glUniform.uniformName UTF8String]);
 		
 		if(glUniform.uniformDataType == Matrix4_Type){
-		
+			
 			
 			GLKEffectPropertyTransform *matObj = [[GLKEffectPropertyTransform alloc] init];
 			
 			[matObj setProjectionMatrix:mat];
-
+			
 			
 			[glUniform setUniformData:matObj];
 		}

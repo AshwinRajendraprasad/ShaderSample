@@ -25,12 +25,14 @@
 	GLvoid *pixels ;
 	
 	GLKMatrix4 m ;
+	
+	int shaderNo;
 }
 @end
 
 @implementation ShaderRenderer
 
-@synthesize width,height,renderedLayer;
+@synthesize width,height,renderedLayer,delegate;
 
 // Create an ES 2.0 context
 - (id) initWithShader:(NSArray *) shaderArray onScreen:(BOOL)isOnScreen2
@@ -43,14 +45,9 @@
 		
 		if (!context || ![EAGLContext setCurrentContext:context] || ![self loadShader])
 		{
-			[self release];
 			return nil;
 		}
 		
-		// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
-		
-		
-		//		glGenTextures(1, &textureId);
 		textureId[0] = 13;
 		textureId[1] = 14;
 		
@@ -71,7 +68,7 @@
 
 
 
--(void)genFrameBuffer:(GLuint) frameBuffer ToRenderInTex:(GLuint) texture{
+-(void)configFrameBuffer:(GLuint) frameBuffer ToRenderInTex:(GLuint) texture{
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -80,10 +77,14 @@
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, 0);
 	
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-	
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+		
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -92,36 +93,44 @@
 - (void)renderWithTextures:(NSArray *) shaderArray
 {
 	
-	shaderList = shaderArray;
+	if(shaderArray != Nil)
+		shaderList = shaderArray;
 	
 	[EAGLContext setCurrentContext:context];
 	m = GLKMatrix4Identity;
 	GLKMatrix4 contentModeTransform = GLKMatrix4MakeOrtho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
 	GLKMatrix4 contentTransform = GLKMatrix4Multiply(GLKMatrix4MakeScale(-1, 1, 1), GLKMatrix4MakeRotation(-M_PI_2, 0, 0, 1));
+	
+
+	
 	for (int i = 0; i<[shaderList count];i++) {
+		
+		shaderNo = i;
 		int fr = i%2;
-//		ShaderProperties *shaderProperties = [shaderList objectAtIndex:i];
-		//		UIImage *img;
+
 		
 		GLShader *shader = [shaderList objectAtIndex:i];
 		
 		int prev = (fr+1)%2;
-		if([shaderList count] > 1 && i != 0){
+	
+		if(shaderArray != Nil)
 			[shader loadTextureFromFrameBuffer:renderFrameBuffer[prev] Tex:textureId[prev] Width:width Height:height];
-		}else{
-			//			NSLog(@"load texture from image");
-			[shader loadTexture];
-		}
+
+		if(i != [shaderList count] -1 ||([shaderList count] == (i+1) && !isOnScreenRender)){
+	
+			
 		
-		if(i != [shaderList count] -1 ||([shaderList count] == 1 && !isOnScreenRender)){
-			//			glClear(GL_COLOR_BUFFER_BIT);
+			backingWidth = width;
+			backingHeight = height;
+
+					[self configFrameBuffer:renderFrameBuffer[fr] ToRenderInTex:textureId[fr]];
+				
 			
+				
+				[self renderOnFrameBuffer:renderFrameBuffer[fr] WithShader:shader];
+				
 			
-			
-			[self genFrameBuffer:renderFrameBuffer[fr] ToRenderInTex:textureId[fr]];
-			
-			[self renderOnFrameBuffer:renderFrameBuffer[fr] WithShader:shader];
-			m = GLKMatrix4Multiply(contentModeTransform, contentTransform);
+			//			m = GLKMatrix4Multiply(contentModeTransform, contentTransform);
 		}else{
 			
 			
@@ -138,10 +147,6 @@
 	
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	
-//	GLShader *shader = [shaderProperties shader];
-	
-	[self configRenderBufferFromFrameBuffer:frameBuffer];
 	
 	glViewport(0, 0, backingWidth, backingHeight);
 	
@@ -162,8 +167,11 @@
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	
 	glFinish ();
+	if([shaderList count] == (shaderNo+1) && !isOnScreenRender){
+		UIImage *img = [self getRenderedImageFromFrameBuffer:frameBuffer];
 	
-//	UIImage *img = [self getRenderedImageFromFrameBuffer:frameBuffer];
+		[delegate renderedImage:img];
+	}
 	
 	NSLog(@"");
 	
@@ -175,7 +183,6 @@
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
 	
-//	GLShader *shader = [shaderProperties shader];
 	
 	[self configRenderBufferFromLayer];
 	
@@ -225,9 +232,7 @@
 	
 	
 	for (GLShader *shader in shaderList) {
-//		GLShader *shader  = [shaderProperties shader];
-		
-		// create shader program
+
 		if (![shader compileShader])
 		{
 			return NO;
@@ -282,10 +287,7 @@
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, backingWidth, backingHeight);
-	
-	//	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
-	//	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
+
 	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
@@ -351,10 +353,8 @@
 	if ([EAGLContext currentContext] == context)
 		[EAGLContext setCurrentContext:nil];
 	
-	[context release];
 	context = nil;
 	
-	[super dealloc];
 }
 
 @end

@@ -15,7 +15,7 @@
 		0C14EB721BAE8F75007FF8B0 /* horzBlurShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 0C14EB6E1BAE8F75007FF8B0 /* horzBlurShader.vsh */; };
 		0C14EB751BAE9669007FF8B0 /* horzBlurShader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 0C14EB6D1BAE8F75007FF8B0 /* horzBlurShader.fsh */; };
 		0C14EB761BAE9669007FF8B0 /* horzBlurShader.vsh in Sources */ = {isa = PBXBuildFile; fileRef = 0C14EB6E1BAE8F75007FF8B0 /* horzBlurShader.vsh */; };
-		0C264DF51BAD582A0039E6BA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C264DF41BAD582A0039E6BA /* ViewController.m */; };
+		0C264DF51BAD582A0039E6BA /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C264DF41BAD582A0039E6BA /* CameraViewController.m */; };
 		0C264DF71BAD8DEC0039E6BA /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C264DF61BAD8DEC0039E6BA /* AVFoundation.framework */; };
 		0C264DF91BAD8FCA0039E6BA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C264DF81BAD8FCA0039E6BA /* CoreMedia.framework */; };
 		0C264DFB1BAD8FF30039E6BA /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C264DFA1BAD8FF30039E6BA /* CoreVideo.framework */; };
@@ -28,6 +28,9 @@
 		0C7BF9461BC8E4A4007095C7 /* BeautySkinNatural.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 0C7BF9451BC8E4A4007095C7 /* BeautySkinNatural.fsh */; };
 		0CB99F071BBA6DB3008D3919 /* GLTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CB99F061BBA6DB3008D3919 /* GLTexture.m */; };
 		0CB99F0A1BBA6DCB008D3919 /* GLUniform.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CB99F091BBA6DCB008D3919 /* GLUniform.m */; };
+		0CC18B241BC90C66004720ED /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CC18B231BC90C66004720ED /* ImageViewController.m */; };
+		0CC3C8E51BCA2229001E6778 /* dream_village.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0CC3C8E41BCA2229001E6778 /* dream_village.jpg */; };
+		0CC3C8E71BCA2322001E6778 /* dream_village_s.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0CC3C8E61BCA2322001E6778 /* dream_village_s.jpg */; };
 		0CE43ACC1BC3CF3F00964769 /* shader2.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 0CE43ACB1BC3CF3F00964769 /* shader2.vsh */; };
 		0CE43ACE1BC3CF4800964769 /* shader2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 0CE43ACD1BC3CF4800964769 /* shader2.fsh */; };
 		1D3623260D0F684500981E51 /* GLES2SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* GLES2SampleAppDelegate.m */; };
@@ -50,8 +53,8 @@
 		0C14EAFC1BAE83DF007FF8B0 /* ShaderSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderSample_Prefix.pch; sourceTree = "<group>"; };
 		0C14EB6D1BAE8F75007FF8B0 /* horzBlurShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = horzBlurShader.fsh; sourceTree = "<group>"; };
 		0C14EB6E1BAE8F75007FF8B0 /* horzBlurShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = horzBlurShader.vsh; sourceTree = "<group>"; };
-		0C264DF31BAD582A0039E6BA /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		0C264DF41BAD582A0039E6BA /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		0C264DF31BAD582A0039E6BA /* CameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraViewController.h; sourceTree = "<group>"; };
+		0C264DF41BAD582A0039E6BA /* CameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraViewController.m; sourceTree = "<group>"; };
 		0C264DF61BAD8DEC0039E6BA /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		0C264DF81BAD8FCA0039E6BA /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		0C264DFA1BAD8FF30039E6BA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -65,6 +68,10 @@
 		0CB99F061BBA6DB3008D3919 /* GLTexture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GLTexture.m; path = ../GLTexture.m; sourceTree = "<group>"; };
 		0CB99F081BBA6DCB008D3919 /* GLUniform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLUniform.h; sourceTree = "<group>"; };
 		0CB99F091BBA6DCB008D3919 /* GLUniform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLUniform.m; sourceTree = "<group>"; };
+		0CC18B221BC90C66004720ED /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewController.h; sourceTree = "<group>"; };
+		0CC18B231BC90C66004720ED /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
+		0CC3C8E41BCA2229001E6778 /* dream_village.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dream_village.jpg; sourceTree = "<group>"; };
+		0CC3C8E61BCA2322001E6778 /* dream_village_s.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dream_village_s.jpg; sourceTree = "<group>"; };
 		0CE43ACB1BC3CF3F00964769 /* shader2.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader2.vsh; sourceTree = "<group>"; };
 		0CE43ACD1BC3CF4800964769 /* shader2.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader2.fsh; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -120,12 +127,14 @@
 				1D3623240D0F684500981E51 /* GLES2SampleAppDelegate.h */,
 				1D3623250D0F684500981E51 /* GLES2SampleAppDelegate.m */,
 				0C04CACC1BAAE78D00250362 /* Storyboard.storyboard */,
-				0C264DF31BAD582A0039E6BA /* ViewController.h */,
-				0C264DF41BAD582A0039E6BA /* ViewController.m */,
+				0C264DF31BAD582A0039E6BA /* CameraViewController.h */,
+				0C264DF41BAD582A0039E6BA /* CameraViewController.m */,
 				0C264DFC1BAD9F670039E6BA /* Utility.h */,
 				0C264DFD1BAD9F670039E6BA /* Utility.m */,
 				0CB99F081BBA6DCB008D3919 /* GLUniform.h */,
 				0CB99F091BBA6DCB008D3919 /* GLUniform.m */,
+				0CC18B221BC90C66004720ED /* ImageViewController.h */,
+				0CC18B231BC90C66004720ED /* ImageViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -162,6 +171,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0CC3C8E61BCA2322001E6778 /* dream_village_s.jpg */,
+				0CC3C8E41BCA2229001E6778 /* dream_village.jpg */,
 				0C04CAC61BAADD4800250362 /* image.jpg */,
 				0C04CAC71BAADD4800250362 /* oil.jpg */,
 				AF1AED3F101E69BE00EFB8CB /* Shaders */,
@@ -257,8 +268,10 @@
 				0C26DC161BAE7478008294F3 /* shader.vsh in Resources */,
 				0C14EB721BAE8F75007FF8B0 /* horzBlurShader.vsh in Resources */,
 				0C04CAC91BAADD4800250362 /* oil.jpg in Resources */,
+				0CC3C8E71BCA2322001E6778 /* dream_village_s.jpg in Resources */,
 				0CE43ACE1BC3CF4800964769 /* shader2.fsh in Resources */,
 				0CE43ACC1BC3CF3F00964769 /* shader2.vsh in Resources */,
+				0CC3C8E51BCA2229001E6778 /* dream_village.jpg in Resources */,
 				0C26DC181BAE7489008294F3 /* shader.fsh in Resources */,
 				0C04CACD1BAAE78D00250362 /* Storyboard.storyboard in Resources */,
 				0C14EB711BAE8F75007FF8B0 /* horzBlurShader.fsh in Resources */,
@@ -278,13 +291,14 @@
 				0CB99F071BBA6DB3008D3919 /* GLTexture.m in Sources */,
 				0C26DC191BAE753E008294F3 /* shader.vsh in Sources */,
 				0C26DC1A1BAE753E008294F3 /* shader.fsh in Sources */,
-				0C264DF51BAD582A0039E6BA /* ViewController.m in Sources */,
+				0C264DF51BAD582A0039E6BA /* CameraViewController.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* GLES2SampleAppDelegate.m in Sources */,
 				28FD14FE0DC6FC130079059D /* EAGLView.m in Sources */,
 				0C264DFE1BAD9F670039E6BA /* Utility.m in Sources */,
 				0CB99F0A1BBA6DCB008D3919 /* GLUniform.m in Sources */,
 				AF1AED3A101E699D00EFB8CB /* ShaderRenderer.m in Sources */,
+				0CC18B241BC90C66004720ED /* ImageViewController.m in Sources */,
 				AF1AED3B101E699D00EFB8CB /* GLShader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,6 +310,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -303,7 +318,7 @@
 				GCC_PREFIX_HEADER = ShaderSample_Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				INFOPLIST_FILE = "ShaderSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ca.ipvisionringinc;
 				PRODUCT_NAME = ShaderSample;
 			};
@@ -313,12 +328,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ShaderSample_Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				INFOPLIST_FILE = "ShaderSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ca.ipvisionringinc;
 				PRODUCT_NAME = ShaderSample;
 			};

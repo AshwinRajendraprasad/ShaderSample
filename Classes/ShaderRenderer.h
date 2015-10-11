@@ -15,6 +15,12 @@
 
 
 
+@protocol ShaderRendererDelegate <NSObject>
+
+-(void)renderedImage:(UIImage *)image;
+
+@end
+
 
 @interface ShaderRenderer : NSObject
 {
@@ -25,7 +31,8 @@
 
 @property(readwrite) int width;
 @property(readwrite) int height;
-@property(readwrite,retain,nonatomic) CAEAGLLayer *renderedLayer;
+@property(readwrite,strong,nonatomic) CAEAGLLayer *renderedLayer;
+@property(weak,readwrite) id<ShaderRendererDelegate> delegate;
 
 - (void)renderWithTextures:(NSArray *) shaderArray;
 

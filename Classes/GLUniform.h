@@ -28,7 +28,7 @@ enum UniformDataType{
 @property(readwrite) GLint uniformLocation;
 @property(readwrite,copy) NSString *uniformName;
 
-@property(readwrite,retain) NSObject *uniformData;
+@property(readwrite,strong) NSObject *uniformData;
 
 @property(readwrite) enum UniformDataType uniformDataType;
 

@@ -37,15 +37,11 @@
 - (void) layoutSubviews
 {
 	
+	[super layoutSubviews];
+	
 	[renderer setRenderedLayer:(CAEAGLLayer*)self.layer];
     [self drawView:nil];
 }
 
-- (void) dealloc
-{
-    [renderer release];
-	
-    [super dealloc];
-}
 
 @end

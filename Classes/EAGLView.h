@@ -12,7 +12,7 @@
 }
 
 
-@property(readwrite,retain) ShaderRenderer *renderer;
+@property(readwrite,strong) ShaderRenderer *renderer;
 
 
 - (void) drawView:(id)sender;
