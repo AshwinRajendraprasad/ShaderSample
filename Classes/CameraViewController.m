@@ -57,7 +57,7 @@
 	
 	((EAGLView *)glkView).renderer = renderer;
 	
-
+	
 }
 
 -(NSArray *) getShader{
@@ -68,7 +68,7 @@
 	NSArray *uniformArray = [self getShader1Uniforms:YES];
 	
 	
-//	ShaderProperties *shader1 = [[ShaderProperties alloc] init];
+	//	ShaderProperties *shader1 = [[ShaderProperties alloc] init];
 	
 	GLShader *shader1 = [[GLShader alloc] init];
 	
@@ -77,10 +77,10 @@
 	shader1.textureArray = textureArray1;
 	shader1.uniformArray = uniformArray;
 	
-
+	
 	NSArray *textureArray2 = [self getShader2Texures];
 	
-//	ShaderProperties *shader2 = [[ShaderProperties alloc] init];
+	//	ShaderProperties *shader2 = [[ShaderProperties alloc] init];
 	GLShader *shader2 = [[GLShader alloc] init];
 	shader2.vertexShaderFileName = @"horzBlurShader";
 	shader2.fragmentShaderFileName = @"horzBlurShader";
@@ -90,7 +90,7 @@
 	NSArray *uniformArray2 = [self getShader1Uniforms:NO];
 	NSArray *textureArray3 = [self getShaderTexures3];
 	
-//	ShaderProperties *shader3 = [[ShaderProperties alloc] init];
+	//	ShaderProperties *shader3 = [[ShaderProperties alloc] init];
 	GLShader *shader3 = [[GLShader alloc] init];
 	shader3.vertexShaderFileName = @"horzBlurShader";
 	shader3.fragmentShaderFileName = @"horzBlurShader";
@@ -165,7 +165,7 @@
 	[texture1 setTextureName:@"s_texture"];
 	[texture1 setTextureId:1];
 	[texture1 setTextureType:FrameBuffer];
-
+	
 	
 	NSArray *array = [NSArray arrayWithObjects:texture1, nil];
 	
@@ -237,7 +237,7 @@
 	GLUniform *uniform5 = [[GLUniform alloc] init];
 	
 	[uniform5 setUniformName:@"contentTransform"];
-
+	
 	[uniform5 setUniformDataType:Matrix4_Type];
 	
 	
@@ -293,15 +293,37 @@
 	
 }
 
+-(void)touchesBegan:(nonnull NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event{
+
+
+
+	NSLog(@"touch began");
+
+
+}
+
+-(void)touchesEnded:(nonnull NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event{
+
+
+
+	NSLog(@"touch ended");
+
+}
+CVImageBufferRef pixelBuffer;
 -(void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection{
 	
+	
+	
+	
+	pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
 
 		
-		CVImageBufferRef pixelBuffer;
-		pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+
+//	dispatch_async(dispatch_get_main_queue(), ^{
+	
 		
 		CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-		
+	
 		size_t width = CVPixelBufferGetWidth(pixelBuffer);
 		size_t height = CVPixelBufferGetHeight(pixelBuffer);
 		
@@ -322,25 +344,32 @@
 			}
 			
 			for (GLTexture *texture in shader.textureArray) {
-				if(texture.textureType == CVImageBuffer)
+				if(texture.textureType == CVImageBuffer){
+					
 					[texture setTextureImageBuffer:pixelBuffer];
+					
+				}
 			}
 			
 			
 		}
-		
 		[renderer renderWithTextures:shaderArray];
 		
-		
 		CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+//	});
+	
+	
 		
-		
+//		CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+
+//	NSLog(@"capture");
 
 	
 	
 	
-	
 }
+
+
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
 	// Dispose of any resources that can be recreated.

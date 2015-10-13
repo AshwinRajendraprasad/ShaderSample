@@ -32,7 +32,7 @@
 
 @implementation ShaderRenderer
 
-@synthesize width,height,renderedLayer,delegate;
+@synthesize width,height,renderedLayer,delegate,renderedGLKView;
 
 // Create an ES 2.0 context
 - (id) initWithShader:(NSArray *) shaderArray onScreen:(BOOL)isOnScreen2
@@ -96,12 +96,12 @@
 	if(shaderArray != Nil)
 		shaderList = shaderArray;
 	
-	[EAGLContext setCurrentContext:context];
+
 	m = GLKMatrix4Identity;
 	GLKMatrix4 contentModeTransform = GLKMatrix4MakeOrtho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
 	GLKMatrix4 contentTransform = GLKMatrix4Multiply(GLKMatrix4MakeScale(-1, 1, 1), GLKMatrix4MakeRotation(-M_PI_2, 0, 0, 1));
 	
-
+[EAGLContext setCurrentContext:context];
 	
 	for (int i = 0; i<[shaderList count];i++) {
 		
@@ -112,7 +112,7 @@
 		GLShader *shader = [shaderList objectAtIndex:i];
 		
 		int prev = (fr+1)%2;
-	
+
 		if(shaderArray != Nil)
 			[shader loadTextureFromFrameBuffer:renderFrameBuffer[prev] Tex:textureId[prev] Width:width Height:height];
 
@@ -122,15 +122,15 @@
 		
 			backingWidth = width;
 			backingHeight = height;
-
-					[self configFrameBuffer:renderFrameBuffer[fr] ToRenderInTex:textureId[fr]];
+	
+			[self configFrameBuffer:renderFrameBuffer[fr] ToRenderInTex:textureId[fr]];
 				
 			
 				
-				[self renderOnFrameBuffer:renderFrameBuffer[fr] WithShader:shader];
+			[self renderOnFrameBuffer:renderFrameBuffer[fr] WithShader:shader];
 				
+//			m = GLKMatrix4Multiply(contentModeTransform, contentTransform);
 			
-			//			m = GLKMatrix4Multiply(contentModeTransform, contentTransform);
 		}else{
 			
 			
@@ -166,13 +166,13 @@
 	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	
-	glFinish ();
+
 	if([shaderList count] == (shaderNo+1) && !isOnScreenRender){
 		UIImage *img = [self getRenderedImageFromFrameBuffer:frameBuffer];
 	
 		[delegate renderedImage:img];
 	}
-	
+
 	NSLog(@"");
 	
 }
@@ -203,10 +203,11 @@
 	}
 	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	
-	glFinish ();
+
 	
 	[context presentRenderbuffer:GL_RENDERBUFFER];
+	glFlush();
+	
 	
 }
 
@@ -303,15 +304,32 @@
 	
 	renderedLayer = renderedLayer2;
 	
+	
+	
 	[self configRenderBufferFromLayer];
 	
+}
+
+-(void)setRenderedGLKView:(GLKView *)renderedGLKView2{
+
+
+	renderedGLKView = renderedGLKView2;
+	
+	 renderedGLKView.context = context ;
+	[self configRenderBufferFromLayer];
+
 }
 
 -(void) configRenderBufferFromLayer{
 	//	backingWidth = width;
 	//	backingHeight = height;
 	
-	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:renderedLayer];
+	if(renderedGLKView != Nil)
+		[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:renderedGLKView.layer];
+	else
+		[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:renderedLayer];
+	
+	
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
 	

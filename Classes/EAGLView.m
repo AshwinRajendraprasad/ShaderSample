@@ -30,8 +30,12 @@
     return self;
 }
 
+
+
 - (void) drawView:(id)sender
 {
+	
+	
 }
 
 - (void) layoutSubviews

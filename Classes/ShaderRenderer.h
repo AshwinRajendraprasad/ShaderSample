@@ -32,6 +32,7 @@
 @property(readwrite) int width;
 @property(readwrite) int height;
 @property(readwrite,strong,nonatomic) CAEAGLLayer *renderedLayer;
+@property(readwrite,strong,nonatomic) GLKView *renderedGLKView;
 @property(weak,readwrite) id<ShaderRendererDelegate> delegate;
 
 - (void)renderWithTextures:(NSArray *) shaderArray;
